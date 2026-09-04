@@ -550,6 +550,17 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
 .chat-msg.from-admin .bubble { background: var(--ink-650); border: 1px solid var(--signal); color: var(--paper); border-bottom-left-radius: 3px; }
 .chat-msg.from-admin .meta { color: var(--signal-2); }
 
+.chat-link { color: var(--signal-2); text-decoration: underline; font-weight: 600; word-break: break-all; }
+.chat-link:hover { color: var(--signal); }
+
+.chat-quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 4px; align-self: flex-start; max-width: 100%; }
+.chat-quick-btn {
+  font-family: var(--font-body); font-size: 0.78rem; color: var(--signal-2);
+  background: var(--ink-700); border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 13px; cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease;
+}
+.chat-quick-btn:hover { border-color: var(--signal); color: var(--signal); }
+
 .chat-typing { align-self: flex-start; display: flex; gap: 4px; padding: 10px 13px; background: var(--ink-700); border: 1px solid var(--line); border-radius: 12px; border-bottom-left-radius: 3px; }
 .chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--paper-dimmer); animation: typingDot 1.2s ease infinite; }
 .chat-typing span:nth-child(2) { animation-delay: 0.15s; }
@@ -1340,13 +1351,31 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     body.scrollTop = body.scrollHeight;
   }
 
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // Turns any relative (tracking.html?...) or absolute (https://...) URL
+  // inside a bot/admin message into a clickable link, while still
+  // escaping everything else so we never inject raw HTML from anywhere.
+  function linkify(text) {
+    const escaped = escapeHtml(text);
+    return escaped.replace(/(https?:\/\/[^\s]+|[a-zA-Z0-9_-]+\.html\?[^\s]+)/g, (url) => {
+      return `<a href="${url}" class="chat-link" target="_self" rel="noopener">${url}</a>`;
+    });
+  }
+
   function addBubble(sender, content, atStart = false) {
     const c = cc();
     const wrap = document.createElement('div');
     wrap.className = `chat-msg from-${sender}`;
     const bubble = document.createElement('div');
     bubble.className = 'bubble';
-    bubble.textContent = content;
+    if (sender === 'user') {
+      bubble.textContent = content;
+    } else {
+      bubble.innerHTML = linkify(content);
+    }
     const meta = document.createElement('div');
     meta.className = 'meta';
     meta.textContent = sender === 'user' ? c.you : (sender === 'admin' ? c.admin : c.bot);
@@ -1354,6 +1383,27 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     wrap.appendChild(meta);
     if (atStart) body.insertBefore(wrap, body.firstChild);
     else body.appendChild(wrap);
+  }
+
+  // Renders a row of tappable quick-reply chips right under the greeting
+  // (or any bot message) so mobile users don't have to type at all.
+  function addQuickReplies(options) {
+    const row = document.createElement('div');
+    row.className = 'chat-quick-replies';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chat-quick-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => {
+        row.remove();
+        input.value = opt;
+        sendMessage();
+      });
+      row.appendChild(btn);
+    });
+    body.appendChild(row);
+    scrollToBottom();
   }
 
   function showTyping() {
@@ -1371,6 +1421,36 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   }
 
   // ---------------------------------------------------------------
+  // TRACKING NUMBER DETECTION
+  // Recognizes a pasted/typed tracking number in free text so the
+  // bot can hand the user straight to tracking.html with the number
+  // pre-filled, instead of asking them to retype it in the form.
+  // ---------------------------------------------------------------
+  function extractTrackingNumber(rawText) {
+    const trimmed = rawText.trim();
+    if (!trimmed) return null;
+
+    // 1) Explicit label: "tracking number: XXXX", "운송장번호 XXXX", "AWB# XXXX"
+    const labeled = trimmed.match(
+      /(?:tracking\s*(?:number|no\.?|#)?|운송장\s*번호|송장\s*번호|awb\s*#?)\s*[:#-]?\s*([A-Za-z0-9-]{5,30})/i
+    );
+    if (labeled && /\d/.test(labeled[1])) return labeled[1].toUpperCase();
+
+    // 2) Bare code: only fire when the message is short (<=3 tokens) so we
+    // don't misfire on ordinary sentences that happen to contain a number.
+    const tokens = trimmed.split(/\s+/).filter(Boolean);
+    if (tokens.length <= 3) {
+      for (const raw of tokens) {
+        const tok = raw.replace(/^[.,;:!?()]+|[.,;:!?()]+$/g, '');
+        const isMixedCode = /^[A-Za-z0-9-]{6,30}$/.test(tok) && /\d/.test(tok) && /[A-Za-z]/.test(tok);
+        const isNumericCode = /^[0-9]{8,20}$/.test(tok);
+        if (isMixedCode || isNumericCode) return tok.toUpperCase();
+      }
+    }
+    return null;
+  }
+
+  // ---------------------------------------------------------------
   // BOT REPLY ENGINE
   // Generates and inserts the assistant's reply directly, instead of
   // relying on a Supabase Edge Function ("chat-reply") that may not
@@ -1382,43 +1462,154 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   // LLM, swap the body of generateBotReply() for a call to it.
   // ---------------------------------------------------------------
   function generateBotReply(rawText, langCode) {
-    const q = rawText.toLowerCase();
     const isKo = langCode === 'ko';
+    const q = rawText.toLowerCase().trim();
     const has = words => words.some(w => q.includes(w));
 
-    if (has(['추적', '운송장', 'tracking', 'track', '배송 상태', '어디'])) {
+    // ---- 0. Tracking number pasted directly into chat ----
+    const trackingNo = extractTrackingNumber(rawText);
+    if (trackingNo) {
+      const url = `tracking.html?tracking_no=${encodeURIComponent(trackingNo)}`;
       return isKo
-        ? '배송 추적은 간단해요 📦\n\n상단 메뉴의 "배송 추적"을 클릭하시거나, 운송장 번호를 여기에 보내주시면 상태를 확인해 드릴게요. 운송장 번호가 있으신가요?'
-        : "Tracking is easy 📦\n\nClick \"Track Shipment\" in the menu, or just send me your tracking number here and I'll help you check its status. Do you have one handy?";
+        ? `운송장 번호 ${trackingNo} 확인했습니다 📦\n\n아래 링크를 눌러 실시간 배송 상태를 바로 확인하세요:\n${url}`
+        : `Got your tracking number ${trackingNo} 📦\n\nTap the link below to see its real-time status right away:\n${url}`;
     }
 
-    if (has(['견적', '가격', '요금', '비용', 'quote', 'price', 'cost', 'how much'])) {
+    // ---- 1. Tracking (no number given yet) ----
+    if (has(['추적', '어디', '배송 상태', '배송상태', 'track', 'where is my', 'shipment status'])) {
       return isKo
-        ? '견적 문의 감사합니다 💰\n\n컨테이너 운송, RoRo(차량/중장비), 특수 화물 중 어떤 서비스가 필요하신가요? 출발지, 도착지, 화물 정보를 알려주시면 상담원이 정확한 견적을 도와드립니다. 하단 "연락처" 양식으로도 요청하실 수 있어요.'
-        : 'Happy to help with a quote 💰\n\nAre you looking for Container Shipping, RoRo (vehicles/heavy machinery), or Special Cargo? Share your origin, destination, and cargo details and an agent can put together an accurate quote. You can also use the contact form below.';
+        ? '배송 추적은 간단해요 📦\n\n운송장 번호를 이 채팅창에 그대로 붙여넣으시면 추적 페이지 링크를 바로 드릴게요. 또는 상단 메뉴의 "배송 추적"을 이용해 주세요.'
+        : "Tracking is easy 📦\n\nJust paste your tracking number right here in the chat and I'll send you a direct link to check its status. Or use \"Track Shipment\" in the menu.";
     }
 
-    if (has(['서비스', 'service', 'services', '무엇을 하'])) {
+    // ---- 2. Quotes / pricing ----
+    if (has(['견적', '가격', '요금', '비용', 'quote', 'price', 'cost', 'how much', 'rate'])) {
+      return isKo
+        ? '견적 문의 감사합니다 💰\n\n컨테이너 운송, RoRo(차량/중장비), 특수 화물 중 어떤 서비스가 필요하신가요? 출발지, 도착지, 화물 정보(무게/부피)를 알려주시면 상담원이 정확한 견적을 도와드립니다. 하단 "연락처" 양식으로도 요청하실 수 있어요.'
+        : 'Happy to help with a quote 💰\n\nAre you looking for Container Shipping, RoRo (vehicles/heavy machinery), or Special Cargo? Share your origin, destination, and cargo details (weight/volume) and an agent can put together an accurate quote. You can also use the contact form below.';
+    }
+
+    // ---- 3. Delivery time / ETA ----
+    if (has(['얼마나 걸려', '도착 시간', '배송 기간', '소요 시간', 'eta', 'how long', 'delivery time', 'arrive'])) {
+      return isKo
+        ? '배송 소요 시간은 경로와 서비스 종류에 따라 달라집니다 ⏱️\n\n운송장 번호가 있으시면 예상 도착일을 바로 확인해 드릴 수 있고, 아직 배송 전이라면 출발지/도착지를 알려주시면 대략적인 소요 기간을 안내해 드릴게요.'
+        : 'Transit time depends on the route and service type ⏱️\n\nIf you already have a tracking number, I can show you the estimated arrival right away. If it hasn\'t shipped yet, tell me the origin and destination and I can give you a rough timeframe.';
+    }
+
+    // ---- 4. Services overview ----
+    if (has(['서비스', 'service', 'services', '무엇을 하', 'what do you'])) {
       return isKo
         ? 'AOL LOGISTICS는 세 가지 핵심 서비스를 제공합니다 🌍\n\n• 컨테이너 운송 — 글로벌 무역 경로 안전 운송\n• RoRo (롤온/롤오프) — 차량 및 중장비 선적\n• 특수 화물 — 대형·긴급 화물 맞춤 솔루션\n\n더 알고 싶은 서비스가 있으신가요?'
         : 'AOL LOGISTICS offers three core services 🌍\n\n• Container Shipping — secure transport on global trade routes\n• RoRo (Roll-on/Roll-off) — vehicles & heavy machinery\n• Special Cargo — custom solutions for oversized or urgent shipments\n\nWant more detail on any of these?';
     }
 
-    if (has(['연락처', '전화', '이메일', 'contact', 'phone', 'email', '상담원', 'agent', 'human', '사람'])) {
+    // ---- 5. Container shipping detail ----
+    if (has(['컨테이너', 'container'])) {
+      return isKo
+        ? '컨테이너 운송 서비스는 전 세계 주요 무역 경로를 통해 화물을 안전하고 효율적으로 운송합니다 🚢\n\nFCL(전용 컨테이너)과 LCL(혼재) 모두 가능하며, 출발지/도착지와 화물량을 알려주시면 견적을 도와드릴 수 있어요.'
+        : 'Container Shipping moves cargo securely and efficiently across the world\'s major trade routes 🚢\n\nWe support both FCL (full container load) and LCL (shared container). Share your origin/destination and cargo volume and I can help get you a quote.';
+    }
+
+    // ---- 6. RoRo detail ----
+    if (has(['roro', '롤온', '롤오프', 'vehicle shipping', '차량 운송', '자동차 운송'])) {
+      return isKo
+        ? 'RoRo(롤온/롤오프) 서비스는 차량, 트럭, 중장비를 위한 전세계 선적 서비스입니다 🚗\n\n차량을 직접 운전해서 선적하는 방식이라 컨테이너 포장 없이도 안전하게 운송됩니다. 차량 대수와 목적지를 알려주시면 안내해 드릴게요.'
+        : 'RoRo (Roll-on/Roll-off) is our worldwide shipping service for vehicles, trucks, and heavy machinery 🚗\n\nVehicles are driven directly on and off the vessel, so they travel securely without needing container packing. Tell me the number of vehicles and destination and I can guide you further.';
+    }
+
+    // ---- 7. Special cargo detail ----
+    if (has(['특수 화물', '특수화물', 'special cargo', 'oversized', '중량물', '긴급 화물'])) {
+      return isKo
+        ? '특수 화물 서비스는 대형·과중량·긴급 화물을 위한 맞춤형 솔루션입니다 📐\n\n화물의 크기, 무게, 필요 일정을 알려주시면 담당 상담원이 최적의 운송 방법을 제안해 드립니다.'
+        : 'Special Cargo covers custom solutions for oversized, heavy, or time-sensitive shipments 📐\n\nShare the dimensions, weight, and required timeline and an agent can propose the best transport method.';
+    }
+
+    // ---- 8. Insurance / damage / claims ----
+    if (has(['보험', '파손', '손상', '클레임', 'insurance', 'damage', 'damaged', 'claim', 'lost package', '분실'])) {
+      return isKo
+        ? '화물 보험 및 손상/분실 관련 문의는 신속하게 처리해 드립니다 🛡️\n\n운송장 번호와 문제 상황(파손/분실/지연)을 알려주시면 상담원에게 바로 전달해 드릴게요. 급하신 경우 📞 +1 800 173 5507로 연락 주셔도 됩니다.'
+        : 'Cargo insurance and damage/loss issues get priority handling 🛡️\n\nShare your tracking number and describe the issue (damaged/lost/delayed) and I\'ll flag it for an agent right away. For urgent cases, you can also call 📞 +1 800 173 5507.';
+    }
+
+    // ---- 9. Customs / documents ----
+    if (has(['세관', '통관', '서류', '관세', 'customs', 'duties', 'documents needed', 'paperwork'])) {
+      return isKo
+        ? '통관 절차는 화물 종류와 목적지 국가에 따라 다릅니다 📄\n\n일반적으로 상업 송장, 포장 명세서, 원산지 증명서가 필요합니다. 목적지 국가를 알려주시면 더 구체적으로 안내해 드릴게요.'
+        : 'Customs requirements vary by cargo type and destination country 📄\n\nTypically you\'ll need a commercial invoice, packing list, and certificate of origin. Tell me the destination country and I can give you more specific guidance.';
+    }
+
+    // ---- 10. Payment methods ----
+    if (has(['결제', '지불', '입금', 'payment', 'pay', 'invoice'])) {
+      return isKo
+        ? '결제는 계좌이체, 신용카드, 기업 인보이스 결제를 지원합니다 💳\n\n정확한 결제 절차는 담당 상담원이 견적과 함께 안내해 드립니다.'
+        : 'We support bank transfer, credit card, and invoiced payment for business accounts 💳\n\nAn agent will walk you through the exact payment process along with your quote.';
+    }
+
+    // ---- 11. Service areas / countries ----
+    if (has(['어느 나라', '지역', '국가', 'countries', 'coverage', 'which countries', 'areas do you serve'])) {
+      return isKo
+        ? '북미, 남미, 유럽, 아시아, 아프리카까지 5대륙 전역에 서비스를 제공합니다 🌍\n\n특정 국가나 항구에 대해 궁금하신 점이 있으면 말씀해 주세요.'
+        : 'We serve all five continents — North America, South America, Europe, Asia, and Africa 🌍\n\nLet me know if you have a specific country or port in mind.';
+    }
+
+    // ---- 12. Industries served ----
+    if (has(['산업', '자동차 산업', 'industries', 'industry', 'sector'])) {
+      return isKo
+        ? '자동차, 소매, 에너지, 의료 산업을 위한 맞춤형 물류 솔루션을 제공합니다 🏭\n\n특히 의료 분야는 온도 제어 배송도 지원합니다. 어떤 산업에 대해 더 알고 싶으신가요?'
+        : 'We provide tailored logistics for the automotive, retail, energy, and healthcare industries 🏭\n\nHealthcare shipments can also get temperature-controlled handling. Which industry would you like to know more about?';
+    }
+
+    // ---- 13. Operating hours / support ----
+    if (has(['운영 시간', '영업 시간', '몇 시', 'hours', 'open', 'business hours'])) {
+      return isKo
+        ? '고객 지원은 연중무휴 24시간 운영됩니다 🕐\n\n언제든 이 채팅창이나 📞 +1 800 173 5507, 📧 logisticsaol6@gmail.com으로 연락 주세요.'
+        : 'Our support desk runs 24/7, every day of the year 🕐\n\nReach us anytime right here in chat, by phone at 📞 +1 800 173 5507, or by email at 📧 logisticsaol6@gmail.com.';
+    }
+
+    // ---- 14. Cancel / modify a shipment ----
+    if (has(['취소', '변경', '수정', 'cancel', 'modify', 'change my shipment', 'edit shipment'])) {
+      return isKo
+        ? '배송 취소나 변경은 운송 진행 단계에 따라 가능 여부가 달라집니다 ✏️\n\n운송장 번호를 알려주시면 현재 상태를 확인하고 담당 상담원에게 연결해 드릴게요.'
+        : "Whether a shipment can be canceled or changed depends on how far along it is ✏️\n\nShare your tracking number and I'll check its status and connect you with an agent.";
+    }
+
+    // ---- 15. Create a new shipment ----
+    if (has(['배송 생성', '배송 신청', '새 배송', 'create shipment', 'new shipment', 'book a shipment', 'ship something'])) {
+      return isKo
+        ? '새 배송은 상단 메뉴의 "배송 생성"에서 신청하실 수 있어요 📝\n\n화물 정보, 출발지, 도착지를 입력하시면 접수가 완료됩니다. 궁금한 점이 있으면 먼저 여기서 물어보셔도 좋아요.'
+        : 'You can start a new shipment from "Create Shipment" in the menu 📝\n\nJust enter your cargo details, origin, and destination to submit it. Feel free to ask me anything first if you have questions.';
+    }
+
+    // ---- 16. Contact / human agent ----
+    if (has(['연락처', '전화', '이메일', 'contact', 'phone', 'email', '상담원', 'agent', 'human', '사람', 'talk to someone'])) {
       return isKo
         ? '언제든 연락 주세요 📞\n\n전화: +1 800 173 5507\n이메일: logisticsaol6@gmail.com\n\n지금 상담원과 연결해 드릴까요? 이 채팅창에 계속 메시지를 남겨주시면 상담원이 확인 후 직접 답변드립니다.'
         : "Here's how to reach us 📞\n\nPhone: +1 800 173 5507\nEmail: logisticsaol6@gmail.com\n\nWant me to loop in a human agent? Keep chatting here and an agent can jump in anytime.";
     }
 
-    if (has(['안녕', 'hello', 'hi ', 'hey', '반가워']) || q === 'hi') {
+    // ---- 17. Greetings ----
+    if (has(['안녕', 'hello', 'hey', '반가워']) || q === 'hi') {
       return isKo
         ? '안녕하세요! 배송 추적 📦, 견적 요청 💰, 서비스 안내 🌍, 연락처 📞 중 무엇을 도와드릴까요?'
         : 'Hello! How can I help — tracking 📦, a quote 💰, our services 🌍, or contact info 📞?';
     }
 
+    // ---- 18. Thanks / goodbye ----
+    if (has(['감사', '고마워', 'thank', 'thanks'])) {
+      return isKo
+        ? '천만에요! 더 필요한 게 있으면 언제든 말씀해 주세요 😊'
+        : "You're welcome! Let me know if there's anything else you need 😊";
+    }
+    if (has(['안녕히', '잘가', 'bye', 'goodbye', 'see you'])) {
+      return isKo
+        ? '이용해 주셔서 감사합니다! 좋은 하루 되세요 🚚'
+        : 'Thanks for stopping by! Have a great day 🚚';
+    }
+
+    // ---- 19. Fallback ----
     return isKo
-      ? '문의 감사합니다! 다음 중 궁금하신 내용이 있으실까요?\n\n• 📦 배송 추적\n• 💰 견적 요청\n• 🌍 서비스 안내\n• 📞 연락처 / 상담원 연결\n\n원하시는 항목을 말씀해 주세요.'
-      : "Thanks for reaching out! I can help with:\n\n• 📦 Tracking\n• 💰 Quotes\n• 🌍 Our services\n• 📞 Contact info / a human agent\n\nJust let me know which one you'd like.";
+      ? '문의 감사합니다! 다음 중 궁금하신 내용이 있으실까요?\n\n• 📦 배송 추적 (운송장 번호를 붙여넣어 보세요)\n• 💰 견적 요청\n• 🌍 서비스 / 산업 분야 안내\n• 🛡️ 보험, 파손, 통관 문의\n• 📞 연락처 / 상담원 연결\n\n원하시는 항목을 말씀해 주세요.'
+      : "Thanks for reaching out! I can help with:\n\n• 📦 Tracking (paste your tracking number)\n• 💰 Quotes\n• 🌍 Our services / industries\n• 🛡️ Insurance, damage, or customs questions\n• 📞 Contact info / a human agent\n\nJust let me know which one you'd like.";
   }
 
   async function ensureSession() {
@@ -1492,7 +1683,12 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     if (!sessionId) return;
 
     await loadHistory();
-    if (body.children.length === 0) addBubble('bot', cc().greeting);
+    if (body.children.length === 0) {
+      addBubble('bot', cc().greeting);
+      addQuickReplies(lang() === 'ko'
+        ? ['배송 추적', '견적 요청', '서비스 안내', '상담원 연결']
+        : ['Track a shipment', 'Get a quote', 'Our services', 'Talk to an agent']);
+    }
     subscribeRealtime();
     scrollToBottom();
     input.focus();
@@ -1523,6 +1719,10 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     input.value = '';
     input.style.height = 'auto';
     sendBtn.disabled = true;
+
+    // Remove any lingering quick-reply row once the user has engaged.
+    const qr = document.querySelector('.chat-quick-replies');
+    if (qr) qr.remove();
 
     await ensureSession();
     if (!sessionId) { sendBtn.disabled = false; return; }
