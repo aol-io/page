@@ -591,6 +591,9 @@ main { flex: 1; padding-top: 118px; padding-bottom: 80px; }
   border-radius: 50%;
   box-shadow: 0 0 0 6px rgba(255,138,61,0.22);
 }
+/* Dim the Esri "in mature support" basemap slightly so it reads dark and
+   matches the ink-navy palette instead of Esri's neutral gray */
+#map .leaflet-tile-pane { filter: brightness(0.62) contrast(1.15) saturate(0.7); }
 
 /* ==========================================================
    TIMELINE  (manifest log)
@@ -1058,7 +1061,41 @@ function renderAll() {
   applyTranslations();
 }
 
-/***** map *****/
+/***** map *****
+ * NOTE: CARTO's free raster tile endpoint (basemaps.cartocdn.com) now
+ * requires a signed-up API key for unauthenticated requests - without one,
+ * tiles come back watermarked or fail to load. Switched to Esri's
+ * "World Dark Gray Base" canvas, which is free and needs no key, and
+ * added an automatic fallback to plain OpenStreetMap tiles if that ever
+ * fails too, so the map card never silently goes blank.
+ *****/
+function buildTileLayer(map) {
+  const primary = L.tileLayer(
+    'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    {
+      attribution: '&copy; <a href="https://www.esri.com">Esri</a>, HERE, Garmin, &copy; OpenStreetMap contributors',
+      maxZoom: 16,
+      minZoom: 2
+    }
+  );
+
+  let fellBack = false;
+  primary.on('tileerror', () => {
+    if (fellBack) return;
+    fellBack = true;
+    console.warn('Primary map tiles failed to load - falling back to OpenStreetMap tiles.');
+    map.removeLayer(primary);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors',
+      subdomains: 'abc',
+      maxZoom: 19,
+      minZoom: 2
+    }).addTo(map);
+  });
+
+  return primary;
+}
+
 async function updateMapTo(lat, lng, popupText) {
   if (!lat || !lng) { mapCard.classList.add('hidden'); return; }
   mapCard.classList.remove('hidden');
@@ -1067,9 +1104,7 @@ async function updateMapTo(lat, lng, popupText) {
 
   if (!mapInstance) {
     mapInstance = L.map('map', { zoomControl: true }).setView([lat, lng], 11);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO', subdomains: 'abcd', maxZoom: 19
-    }).addTo(mapInstance);
+    buildTileLayer(mapInstance).addTo(mapInstance);
     mapMarker = L.marker([lat, lng], { icon: pinIcon }).addTo(mapInstance).bindPopup(popupText || '');
   } else {
     mapInstance.setView([lat, lng], mapInstance.getZoom() || 11);
