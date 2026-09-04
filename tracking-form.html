@@ -548,7 +548,7 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       <a href="form.html" data-key="nav_create">배송 생성</a>
       <a href="bookshop.html" data-key="nav_news">서점</a>
       <a href="home.html#contact" data-key="nav_contact">연락처</a>
-      <a href="admin/login.html" class="login-link" data-key="nav_login">로그인</a>
+      <a href="admin/login.html" data-key="nav_login">로그인</a>
     </div>
   </div>
 </header>
@@ -739,21 +739,6 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       how1_title: "Enter your number", how1_text: "Use the tracking number from your shipping confirmation or email.",
       how2_title: "Manifest lookup", how2_text: "We search cargo records across our global port and warehouse network.",
       how3_title: "See live status", how3_text: "View current location, next stop, and estimated arrival at a glance.",
-      state_empty_title: "Enter a tracking number to begin",
-      state_empty_text: "Your shipment's live status, location, and delivery timeline will appear here.",
-      state_loading_title: "Looking up your shipment...",
-      state_loading_text: "Checking our global manifest network for this tracking number.",
-      state_error_title: "We couldn't find that shipment",
-      state_error_text: "Double-check the tracking number and try again, or contact support if you believe this is an error.",
-      state_error_try_again: "Try another number",
-      status_delivered: "Delivered",
-      status_in_transit: "In Transit",
-      status_pending: "Pending",
-      rm_origin: "ORIGIN", rm_destination: "DESTINATION", rm_service: "SERVICE", rm_eta: "ESTIMATED ARRIVAL",
-      step_created: "Order Created", step_picked_up: "Picked Up", step_in_transit: "In Transit",
-      step_customs: "Customs Clearance", step_out_for_delivery: "Out for Delivery", step_delivered: "Delivered",
-      copy_label: "Copy",
-      copy_done: "Copied!",
       footer_brand: "AOL LOGISTICS",
       footer_tagline: "Connecting continents with reliable shipping and logistics solutions.",
       footer_links_heading: "Quick Links",
@@ -788,21 +773,6 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       how1_title: "운송장 번호 입력", how1_text: "배송 확인서 또는 이메일에서 받은 운송장 번호를 입력하세요.",
       how2_title: "매니페스트 조회", how2_text: "시스템이 전 세계 항만 및 창고 네트워크에서 화물 기록을 조회합니다.",
       how3_title: "실시간 상태 확인", how3_text: "현재 위치, 다음 경유지, 예상 도착일을 한눈에 확인하세요.",
-      state_empty_title: "운송장 번호를 입력해 주세요",
-      state_empty_text: "화물의 실시간 상태, 위치, 배송 일정이 이곳에 표시됩니다.",
-      state_loading_title: "화물을 조회하고 있습니다...",
-      state_loading_text: "전 세계 매니페스트 네트워크에서 운송장 번호를 확인 중입니다.",
-      state_error_title: "해당 화물을 찾을 수 없습니다",
-      state_error_text: "운송장 번호를 다시 확인해 주세요. 문제가 계속되면 고객 지원팀에 문의해 주세요.",
-      state_error_try_again: "다시 조회하기",
-      status_delivered: "배송 완료",
-      status_in_transit: "운송 중",
-      status_pending: "대기 중",
-      rm_origin: "출발지", rm_destination: "도착지", rm_service: "서비스 종류", rm_eta: "예상 도착일",
-      step_created: "주문 접수", step_picked_up: "픽업 완료", step_in_transit: "운송 중",
-      step_customs: "통관 진행", step_out_for_delivery: "배송 출발", step_delivered: "배송 완료",
-      copy_label: "복사",
-      copy_done: "복사됨!",
       footer_brand: "AOL LOGISTICS",
       footer_tagline: "신뢰할 수 있는 해운 및 물류 솔루션으로 대륙을 연결합니다.",
       footer_links_heading: "빠른 링크",
@@ -854,7 +824,14 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   });
 </script>
 
-<!-- ================= TRACKING LOGIC ================= -->
+<!-- ================= TRACKING LOGIC =================
+     Fixed to match the ACTUAL Supabase schema used by tracking.html:
+     table "user_info" keyed by "tracking_no" (not "shipments" /
+     "tracking_number", which don't exist in this project — that
+     mismatch is why every lookup was falling through to "not found").
+     Status history comes from the "tracking_updates" table, joined
+     on shipment_id, same as tracking.html.
+==================================================================== -->
 <script type="module">
   import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -864,37 +841,57 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   );
 
   function lang() { return localStorage.getItem('site_lang') || 'ko'; }
-  function t(key) {
-    const dict = {
-      en: window.__trackTranslationsEN,
-      ko: window.__trackTranslationsKO
-    };
-    return null; // placeholder, real dict pulled below
+
+  function escapeHtml(str = "") {
+    return String(str).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
   }
 
-  // Pull the same translations object defined in the language-toggle script
-  // by re-reading data-key values isn't possible for dynamic content, so we
-  // keep a lightweight local copy in sync with the same strings.
+  // Same 4-stage status vocabulary as tracking.html
+  const statusMapping = {
+    "Order Placed":       "orderPlaced",
+    "Preparing Shipment": "preparing",
+    "Shipped":            "shipped",
+    "Delivered":          "delivered"
+  };
+  const orderStatuses = Object.keys(statusMapping);
+
+  function normalizeProgress(raw) {
+    if (!raw) return "Order Placed";
+    const trimmed = String(raw).trim();
+    if (orderStatuses.includes(trimmed)) return trimmed;
+    const koMap = {
+      "주문 접수": "Order Placed", "접수": "Order Placed",
+      "준비 중": "Preparing Shipment", "준비": "Preparing Shipment",
+      "배송 중": "Shipped", "배송": "Shipped",
+      "배송 완료": "Delivered", "완료": "Delivered"
+    };
+    if (koMap[trimmed]) return koMap[trimmed];
+    const lower = trimmed.toLowerCase();
+    if (lower.includes("deliver") || lower.includes("완료")) return "Delivered";
+    if (lower.includes("ship")) return "Shipped";
+    if (lower.includes("prepar") || lower.includes("준비")) return "Preparing Shipment";
+    if (lower.includes("order") || lower.includes("placed") || lower.includes("접수")) return "Order Placed";
+    return "Order Placed";
+  }
+
   const STR = {
     ko: {
       empty_title: "운송장 번호를 입력해 주세요", empty_text: "화물의 실시간 상태, 위치, 배송 일정이 이곳에 표시됩니다.",
       loading_title: "화물을 조회하고 있습니다...", loading_text: "전 세계 매니페스트 네트워크에서 운송장 번호를 확인 중입니다.",
       error_title: "해당 화물을 찾을 수 없습니다", error_text: "운송장 번호를 다시 확인해 주세요. 문제가 계속되면 고객 지원팀에 문의해 주세요.",
       try_again: "다시 조회하기",
-      status_delivered: "배송 완료", status_in_transit: "운송 중", status_pending: "대기 중",
-      rm_origin: "출발지", rm_destination: "도착지", rm_service: "서비스 종류", rm_eta: "예상 도착일",
-      steps: { created: "주문 접수", picked_up: "픽업 완료", in_transit: "운송 중", customs: "통관 진행", out_for_delivery: "배송 출발", delivered: "배송 완료" },
-      copy_label: "복사", copy_done: "복사됨!", not_registered: "해당 위치 정보 없음"
+      rm_origin: "출발지", rm_destination: "도착지", rm_customer: "고객", rm_location: "현재 위치",
+      steps: { orderPlaced: "주문 접수", preparing: "준비 중", shipped: "배송 중", delivered: "배송 완료" },
+      copy_label: "복사", copy_done: "복사됨!", not_available: "정보 없음"
     },
     en: {
       empty_title: "Enter a tracking number to begin", empty_text: "Your shipment's live status, location, and delivery timeline will appear here.",
       loading_title: "Looking up your shipment...", loading_text: "Checking our global manifest network for this tracking number.",
       error_title: "We couldn't find that shipment", error_text: "Double-check the tracking number and try again, or contact support if you believe this is an error.",
       try_again: "Try another number",
-      status_delivered: "Delivered", status_in_transit: "In Transit", status_pending: "Pending",
-      rm_origin: "ORIGIN", rm_destination: "DESTINATION", rm_service: "SERVICE", rm_eta: "ESTIMATED ARRIVAL",
-      steps: { created: "Order Created", picked_up: "Picked Up", in_transit: "In Transit", customs: "Customs Clearance", out_for_delivery: "Out for Delivery", delivered: "Delivered" },
-      copy_label: "Copy", copy_done: "Copied!", not_registered: "Location not yet available"
+      rm_origin: "ORIGIN", rm_destination: "DESTINATION", rm_customer: "CUSTOMER", rm_location: "CURRENT LOCATION",
+      steps: { orderPlaced: "Order Placed", preparing: "Preparing Shipment", shipped: "Shipped", delivered: "Delivered" },
+      copy_label: "Copy", copy_done: "Copied!", not_available: "Not available"
     }
   };
 
@@ -975,42 +972,47 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     document.getElementById("tryAgainBtn")?.addEventListener("click", () => { input.focus(); });
   }
 
-  const STEP_ORDER = ["created", "picked_up", "in_transit", "customs", "out_for_delivery", "delivered"];
-
-  function renderSuccess(shipment) {
-    lastResult = { type: "success", data: shipment };
+  function renderSuccess(shipment, updates) {
+    lastResult = { type: "success", data: { shipment, updates } };
     const s = STR[lang()];
 
-    const status = (shipment.status || "pending").toLowerCase();
-    const isDelivered = status === "delivered";
-    const statusLabel = isDelivered ? s.status_delivered : (status === "pending" ? s.status_pending : s.status_in_transit);
+    const latest = updates.length ? updates[0] : null; // updates come back newest-first
+    const rawStatus = latest?.status || latest?.progress || shipment.status || "Order Placed";
+    const normalized = normalizeProgress(rawStatus);
+    const isDelivered = normalized === "Delivered";
+    const statusLabel = s.steps[statusMapping[normalized]] || normalized;
 
-    // Build events either from a jsonb `events` column or a simple status fallback
-    let events = Array.isArray(shipment.events) && shipment.events.length
-      ? shipment.events
-      : STEP_ORDER.map(key => ({ key, location: null, timestamp: null }));
+    const chronological = [...updates].reverse(); // oldest first, for a top-to-bottom journey
+    const railHtml = chronological.length
+      ? chronological.map((u, i) => {
+          const norm = normalizeProgress(u.status || u.progress);
+          const label = s.steps[statusMapping[norm]] || norm;
+          const isLast = i === chronological.length - 1;
+          const cls = isLast ? "current" : "done";
+          const loc = u.location || "";
+          const time = u.created_at
+            ? new Date(u.created_at).toLocaleString(lang() === "ko" ? "ko-KR" : "en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+            : "";
+          const noteHtml = u.note ? `<div class="rail-loc" style="font-style:italic;">${escapeHtml(u.note)}</div>` : "";
+          return `
+            <div class="rail-step ${cls}">
+              <span class="rail-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+              <h5>${escapeHtml(label)}</h5>
+              ${loc ? `<div class="rail-loc">${escapeHtml(loc)}</div>` : ""}
+              ${time ? `<div class="rail-time">${escapeHtml(time)}</div>` : ""}
+              ${noteHtml}
+            </div>`;
+        }).join("")
+      : `
+          <div class="rail-step current">
+            <span class="rail-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
+            <h5>${escapeHtml(statusLabel)}</h5>
+          </div>`;
 
-    const currentIdx = Math.max(0, STEP_ORDER.indexOf(status === "pending" ? "created" : status));
-
-    const railHtml = events.map((ev, i) => {
-      const key = ev.key || STEP_ORDER[i] || "created";
-      const label = s.steps[key] || key;
-      const stepIdx = STEP_ORDER.indexOf(key);
-      const cls = stepIdx < currentIdx || isDelivered && stepIdx <= currentIdx ? "done" : (stepIdx === currentIdx ? "current" : "pending");
-      const loc = ev.location || (cls === "pending" ? s.not_registered : "");
-      const time = ev.timestamp ? new Date(ev.timestamp).toLocaleString(lang() === "ko" ? "ko-KR" : "en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "";
-      return `
-        <div class="rail-step ${cls}">
-          <span class="rail-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></span>
-          <h5>${label}</h5>
-          ${loc ? `<div class="rail-loc">${loc}</div>` : ""}
-          ${time ? `<div class="rail-time">${time}</div>` : ""}
-        </div>`;
-    }).join("");
-
-    const eta = shipment.estimated_delivery
-      ? new Date(shipment.estimated_delivery).toLocaleDateString(lang() === "ko" ? "ko-KR" : "en-US", { year: "numeric", month: "short", day: "numeric" })
-      : "—";
+    const customer = shipment.receiver_name || shipment.customer_name || s.not_available;
+    const origin = shipment.origin || s.not_available;
+    const destination = shipment.receiver_country || shipment.destination || s.not_available;
+    const currentLocation = latest?.location || shipment.location_text || shipment.location || s.not_available;
 
     panel.className = "show";
     panel.innerHTML = `
@@ -1018,10 +1020,10 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
         <div class="result-head">
           <div>
             <div class="rh-label">${lang() === "ko" ? "운송장 번호" : "TRACKING NUMBER"}</div>
-            <div class="rh-num">${shipment.tracking_number}</div>
+            <div class="rh-num">${escapeHtml(shipment.tracking_no)}</div>
           </div>
           <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-            <span class="status-pill ${isDelivered ? "ok" : ""}"><span class="dot"></span>${statusLabel}</span>
+            <span class="status-pill ${isDelivered ? "ok" : ""}"><span class="dot"></span>${escapeHtml(statusLabel)}</span>
             <button class="copy-btn" id="copyTrackBtn" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
               <span id="copyBtnLabel">${s.copy_label}</span>
@@ -1030,10 +1032,10 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
         </div>
 
         <div class="result-meta-grid">
-          <div class="rm-field"><div class="rm-label">${s.rm_origin}</div><div class="rm-value">${shipment.origin || "—"}</div></div>
-          <div class="rm-field"><div class="rm-label">${s.rm_destination}</div><div class="rm-value">${shipment.destination || "—"}</div></div>
-          <div class="rm-field"><div class="rm-label">${s.rm_service}</div><div class="rm-value">${shipment.service_type || "—"}</div></div>
-          <div class="rm-field"><div class="rm-label">${s.rm_eta}</div><div class="rm-value">${eta}</div></div>
+          <div class="rm-field"><div class="rm-label">${s.rm_origin}</div><div class="rm-value">${escapeHtml(origin)}</div></div>
+          <div class="rm-field"><div class="rm-label">${s.rm_destination}</div><div class="rm-value">${escapeHtml(destination)}</div></div>
+          <div class="rm-field"><div class="rm-label">${s.rm_customer}</div><div class="rm-value">${escapeHtml(customer)}</div></div>
+          <div class="rm-field"><div class="rm-label">${s.rm_location}</div><div class="rm-value">${escapeHtml(currentLocation)}</div></div>
         </div>
 
         <div class="rail">${railHtml}</div>
@@ -1041,7 +1043,7 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
 
     document.getElementById("copyTrackBtn")?.addEventListener("click", async () => {
       try {
-        await navigator.clipboard.writeText(shipment.tracking_number);
+        await navigator.clipboard.writeText(shipment.tracking_no);
         const label = document.getElementById("copyBtnLabel");
         label.textContent = STR[lang()].copy_done;
         setTimeout(() => { label.textContent = STR[lang()].copy_label; }, 1600);
@@ -1054,26 +1056,32 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     if (lastResult.type === "empty") renderEmpty();
     else if (lastResult.type === "loading") renderLoading();
     else if (lastResult.type === "error") renderError();
-    else if (lastResult.type === "success") renderSuccess(lastResult.data);
+    else if (lastResult.type === "success") renderSuccess(lastResult.data.shipment, lastResult.data.updates);
   };
 
   async function lookupShipment(code) {
     renderLoading();
     try {
-      // Assumes a `shipments` table keyed by `tracking_number`.
-      // Adjust table/column names here if your schema differs.
-      const { data, error } = await supabase
-        .from("shipments")
+      const { data: shipment, error: shipmentError } = await supabase
+        .from("user_info")
         .select("*")
-        .eq("tracking_number", code)
+        .eq("tracking_no", code)
         .maybeSingle();
 
-      if (error || !data) {
+      if (shipmentError || !shipment) {
         renderError();
         return;
       }
+
+      const { data: updates, error: updatesError } = await supabase
+        .from("tracking_updates")
+        .select("*")
+        .eq("shipment_id", shipment.id)
+        .order("created_at", { ascending: false });
+      if (updatesError) console.warn("updates error", updatesError);
+
       pushRecent(code);
-      renderSuccess(data);
+      renderSuccess(shipment, updates || []);
     } catch (err) {
       console.error("shipment lookup error", err);
       renderError();
