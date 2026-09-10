@@ -6,10 +6,10 @@
 <title>배송 추적 - AOL LOGISTICS</title>
 <meta name="description" content="AOL Logistics - Track your shipment easily and securely.">
 
-<!-- Favicon -->
-<link rel="icon" type="image/png" href="images/images (2).jpeg" />
+<!-- Favicon (same inline mark as home.html) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B3D68'/%3E%3Cpath d='M14 40 Q24 16 34 30 T50 22' fill='none' stroke='%23FFFFFF' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='22' r='4' fill='%23FFFFFF'/%3E%3C/svg%3E" />
 
-<!-- Google Analytics -->
+<!-- Google tag -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5C2122TVD"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -18,677 +18,46 @@
   gtag('config', 'G-G5C2122TVD');
 </script>
 
-<!-- Fonts: Space Grotesk (display/data headings), Inter + Noto Sans KR (body, ko/en), JetBrains Mono (manifest data) -->
+<!-- Fonts (identical to home.html) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
 <!-- Leaflet (map) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
-<!-- Supabase client -->
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-<style>
-/* ==========================================================
-   DESIGN TOKENS
-   Direction: a customs manifest / air-waybill, redrawn as a
-   dark shipping-lane interface. Ink-navy field, signal-amber
-   ink for stamps and active waypoints. Mono type carries every
-   number; Space Grotesk carries every label.
-   ========================================================== */
-:root {
-  --ink-950: #060a18;
-  --ink-900: #0a1128;
-  --ink-800: #101a37;
-  --ink-700: #16214a;
-  --ink-650: #1b2854;
-  --line: #263562;
-  --line-soft: #1c294f;
-  --paper: #eef1f8;
-  --paper-dim: #9aa5c4;
-  --paper-dimmer: #6e7aa0;
-  --signal: #ff8a3d;
-  --signal-2: #ffb066;
-  --signal-ink: #3a1c06;
-  --ok: #35d99a;
-  --ok-ink: #06281c;
-  --err: #ff6b6b;
-  --err-ink: #2c0e0e;
-  --font-display: 'Space Grotesk', 'Noto Sans KR', sans-serif;
-  --font-body: 'Inter', 'Noto Sans KR', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Noto Sans KR', monospace;
-}
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--ink-950);
-  background-image:
-    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,138,61,0.08), transparent 60%),
-    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(58,90,190,0.12), transparent 55%);
-  color: var(--paper);
-  font-family: var(--font-body);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  -webkit-font-smoothing: antialiased;
-}
-
-a { color: inherit; text-decoration: none; }
-
-::selection { background: var(--signal); color: var(--ink-950); }
-
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--ink-900); }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
-
-:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 3px;
-  border-radius: 3px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-.wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
-
-/* ==========================================================
-   HEADER
-   ========================================================== */
-header.site-header {
-  position: fixed;
-  top: 0; left: 0; width: 100%;
-  z-index: 500;
-  background: rgba(8,13,30,0.86);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--line-soft);
-}
-
-.header-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 14px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.brand img {
-  height: 40px; width: 40px; border-radius: 50%;
-  object-fit: cover; flex-shrink: 0;
-  border: 1px solid var(--line);
-  display: none;
-}
-@media (min-width: 640px) { .brand img { display: block; } }
-
-.brand-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
-.brand-text .name {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.08rem;
-  letter-spacing: 0.01em;
-  color: var(--signal-2);
-  font-style: italic;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.brand-text .tag {
-  font-size: 0.68rem;
-  color: var(--paper-dimmer);
-  font-style: italic;
-  display: none;
-}
-@media (min-width: 640px) { .brand-text .tag { display: block; } }
-
-nav.desktop-nav { display: none; align-items: center; gap: 26px; }
-@media (min-width: 768px) { nav.desktop-nav { display: flex; } }
-
-nav.desktop-nav a {
-  font-size: 0.88rem;
-  color: var(--paper-dim);
-  padding: 6px 2px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-nav.desktop-nav a:hover { color: var(--paper); }
-nav.desktop-nav a.current {
-  color: var(--signal-2);
-  font-weight: 600;
-  border-bottom-color: var(--signal);
-}
-
-.header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-
-.btn-lang {
-  background: transparent;
-  border: 1px solid var(--line);
-  color: var(--paper);
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-.btn-lang:hover { border-color: var(--signal); color: var(--signal-2); }
-
-.btn-menu {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px; height: 38px;
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  color: var(--paper);
-  cursor: pointer;
-  flex-direction: column;
-  gap: 4px;
-}
-@media (min-width: 768px) { .btn-menu { display: none; } }
-.btn-menu span { width: 16px; height: 1.5px; background: var(--paper); display: block; }
-
-#mobileMenu {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 0;
-  transition: max-height 280ms ease, opacity 220ms ease;
-  background: var(--ink-900);
-  border-bottom: 1px solid var(--line-soft);
-}
-#mobileMenu.open { max-height: 420px; opacity: 1; }
-#mobileMenu .wrap { padding: 6px 24px 18px; display: flex; flex-direction: column; }
-#mobileMenu a {
-  padding: 12px 4px;
-  border-bottom: 1px solid var(--line-soft);
-  color: var(--paper-dim);
-  font-size: 0.92rem;
-}
-#mobileMenu a:last-child { border-bottom: none; }
-#mobileMenu a.current { color: var(--signal-2); font-weight: 600; }
-
-/* ==========================================================
-   MAIN
-   ========================================================== */
-main { flex: 1; padding-top: 118px; padding-bottom: 80px; }
-
-.page-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--paper-dimmer);
-  text-align: center;
-  margin-bottom: 8px;
-}
-
-.page-title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.7rem, 4vw, 2.5rem);
-  text-align: center;
-  color: var(--paper);
-  margin-bottom: 34px;
-  letter-spacing: -0.01em;
-}
-.page-title .accent { color: var(--signal-2); }
-
-/* ==========================================================
-   LOADING / EMPTY / ERROR STATES
-   ========================================================== */
-.state-block {
-  max-width: 560px;
-  margin: 20px auto;
-  text-align: center;
-  padding: 40px 28px;
-  border: 1px dashed var(--line);
-  border-radius: 14px;
-  background: rgba(255,255,255,0.015);
-}
-.state-block .state-icon {
-  width: 46px; height: 46px;
-  margin: 0 auto 16px;
-  color: var(--signal);
-  opacity: 0.9;
-}
-.state-block p { color: var(--paper-dim); font-size: 0.92rem; line-height: 1.6; }
-.state-block.is-error { border-color: rgba(255,107,107,0.4); background: rgba(255,107,107,0.04); }
-.state-block.is-error .state-icon { color: var(--err); }
-
-.skeleton {
-  background: linear-gradient(90deg, var(--ink-800) 25%, var(--ink-700) 37%, var(--ink-800) 63%);
-  background-size: 400% 100%;
-  animation: skWave 1.4s ease infinite;
-  border-radius: 10px;
-}
-@keyframes skWave { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
-.skeleton-waybill { height: 300px; margin-bottom: 24px; }
-.skeleton-block { height: 120px; margin-bottom: 24px; }
-
-/* ==========================================================
-   WAYBILL CARD  (signature element)
-   Modeled on a real air waybill stub: barcode strip, perforated
-   tear line, stamped status seal.
-   ========================================================== */
-.waybill {
-  position: relative;
-  background: linear-gradient(180deg, var(--ink-800), var(--ink-900));
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 30px 60px -20px rgba(0,0,0,0.55);
-  margin-bottom: 28px;
-}
-
-.waybill-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 22px 26px 18px;
-  flex-wrap: wrap;
-}
-
-.waybill-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--paper-dimmer);
-  margin-bottom: 8px;
-}
-
-.waybill-tracking {
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: clamp(1.3rem, 3.4vw, 1.9rem);
-  letter-spacing: 0.03em;
-  color: var(--paper);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px; height: 32px;
-  border-radius: 7px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.02);
-  color: var(--paper-dim);
-  cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-  flex-shrink: 0;
-}
-.icon-btn:hover { border-color: var(--signal); color: var(--signal-2); background: rgba(255,138,61,0.06); }
-.icon-btn svg { width: 15px; height: 15px; }
-
-/* stamped seal */
-.seal {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.78rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 8px 16px;
-  border: 2.5px solid currentColor;
-  border-radius: 8px;
-  transform: rotate(-4deg);
-  white-space: nowrap;
-  position: relative;
-}
-.seal::after {
-  content: "";
-  position: absolute; inset: 3px;
-  border: 1px solid currentColor;
-  border-radius: 5px;
-  opacity: 0.5;
-}
-.seal.st-pending { color: var(--paper-dim); }
-.seal.st-transit { color: var(--signal-2); }
-.seal.st-shipped { color: var(--signal-2); }
-.seal.st-delivered { color: var(--ok); }
-
-/* barcode strip */
-.barcode {
-  height: 34px;
-  margin: 0 26px 6px;
-  border-radius: 3px;
-  background-image: repeating-linear-gradient(
-    90deg,
-    rgba(238,241,248,0.85) 0px, rgba(238,241,248,0.85) 2px,
-    transparent 2px, transparent 4px,
-    rgba(238,241,248,0.85) 4px, rgba(238,241,248,0.85) 5px,
-    transparent 5px, transparent 9px,
-    rgba(238,241,248,0.85) 9px, rgba(238,241,248,0.85) 12px,
-    transparent 12px, transparent 14px
-  );
-  opacity: 0.28;
-}
-
-/* perforation divider */
-.perf {
-  position: relative;
-  height: 1px;
-  margin: 4px 0;
-  border-top: 1.5px dashed var(--line);
-}
-.perf::before, .perf::after {
-  content: "";
-  position: absolute;
-  top: 50%; transform: translateY(-50%);
-  width: 20px; height: 20px;
-  background: var(--ink-950);
-  border-radius: 50%;
-}
-.perf::before { left: -10px; }
-.perf::after { right: -10px; }
-
-.waybill-body {
-  padding: 22px 26px 26px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px 28px;
-}
-@media (min-width: 640px) { .waybill-body { grid-template-columns: repeat(4, 1fr); } }
-
-.wb-field .wb-label {
-  font-family: var(--font-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--paper-dimmer);
-  margin-bottom: 5px;
-}
-.wb-field .wb-value {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--paper);
-  line-height: 1.4;
-  word-break: break-word;
-}
-.wb-field.wb-status .wb-value { color: var(--signal-2); font-weight: 600; }
-.wb-field.wb-location .wb-value { font-family: var(--font-mono); font-size: 0.88rem; }
-
-/* actions row */
-.waybill-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  padding: 0 26px 24px;
-}
-
-.live-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.02);
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  color: var(--paper-dim);
-}
-.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex-shrink: 0; animation: pulse 2s ease-out infinite; }
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(53,217,154,0.55); }
-  70% { box-shadow: 0 0 0 6px rgba(53,217,154,0); }
-  100% { box-shadow: 0 0 0 0 rgba(53,217,154,0); }
-}
-
-.pill-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--paper-dim);
-  font-size: 0.8rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
-}
-.pill-btn:hover { border-color: var(--signal); color: var(--signal-2); background: rgba(255,138,61,0.06); }
-.pill-btn svg { width: 14px; height: 14px; }
-
-/* ==========================================================
-   ROUTE PROGRESS  (shipping lane, not generic numbered steps)
-   ========================================================== */
-.section-label {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--paper-dimmer);
-  margin-bottom: 14px;
-}
-
-.route-card {
-  background: var(--ink-800);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 28px 26px 22px;
-  margin-bottom: 24px;
-}
-
-.route-rail {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 4px;
-  margin-top: 10px;
-}
-
-.route-track {
-  position: absolute;
-  top: 17px;
-  left: 20px; right: 20px;
-  height: 2px;
-  background: var(--line);
-}
-.route-fill {
-  position: absolute;
-  top: 17px;
-  left: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--signal), var(--signal-2));
-  width: 0%;
-  transition: width 0.6s ease;
-}
-.route-vessel {
-  position: absolute;
-  top: 9px;
-  left: 20px;
-  width: 18px; height: 18px;
-  transform: translateX(-50%);
-  color: var(--signal-2);
-  transition: left 0.6s ease;
-  filter: drop-shadow(0 0 6px rgba(255,138,61,0.6));
-}
-.route-vessel svg { width: 100%; height: 100%; }
-
-.waypoint {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: 25%;
-  text-align: center;
-}
-.wp-dot {
-  width: 34px; height: 34px;
-  border-radius: 9px;
-  background: var(--ink-900);
-  border: 1.5px solid var(--line);
-  display: flex; align-items: center; justify-content: center;
-  color: var(--paper-dimmer);
-  transition: all 0.3s ease;
-  transform: rotate(45deg);
-}
-.wp-dot svg { width: 15px; height: 15px; transform: rotate(-45deg); }
-.waypoint.done .wp-dot { border-color: var(--signal); color: var(--signal-2); background: var(--signal-ink); }
-.waypoint.current .wp-dot {
-  border-color: var(--signal);
-  color: var(--ink-950);
-  background: var(--signal);
-  box-shadow: 0 0 0 5px rgba(255,138,61,0.16);
-}
-.wp-label {
-  font-size: 0.72rem;
-  color: var(--paper-dimmer);
-  font-weight: 500;
-  line-height: 1.3;
-}
-.waypoint.done .wp-label, .waypoint.current .wp-label { color: var(--paper); }
-
-@media (max-width: 480px) {
-  .wp-label { font-size: 0.62rem; }
-  .wp-dot { width: 28px; height: 28px; }
-}
-
-/* ==========================================================
-   MAP
-   ========================================================== */
-.map-card {
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  margin-bottom: 24px;
-  height: 380px;
-  background: var(--ink-800);
-}
-#map { height: 100%; width: 100%; }
-.leaflet-popup-content-wrapper { background: var(--ink-800); color: var(--paper); border-radius: 10px; }
-.leaflet-popup-tip { background: var(--ink-800); }
-.leaflet-popup-content { font-family: var(--font-body); font-size: 0.82rem; }
-.map-pin {
-  width: 16px; height: 16px;
-  background: var(--signal);
-  border: 2px solid var(--paper);
-  border-radius: 50%;
-  box-shadow: 0 0 0 6px rgba(255,138,61,0.22);
-}
-/* Dim the Esri "in mature support" basemap slightly so it reads dark and
-   matches the ink-navy palette instead of Esri's neutral gray */
-#map .leaflet-tile-pane { filter: brightness(0.62) contrast(1.15) saturate(0.7); }
-
-/* ==========================================================
-   TIMELINE  (manifest log)
-   ========================================================== */
-.timeline-card {
-  background: var(--ink-800);
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 26px;
-}
-
-#timeline { position: relative; }
-
-.tl-item {
-  position: relative;
-  padding: 0 0 22px 26px;
-  border-left: 1.5px solid var(--line-soft);
-}
-.tl-item:last-child { border-left-color: transparent; padding-bottom: 0; }
-.tl-item::before {
-  content: "";
-  position: absolute;
-  left: -6.5px; top: 3px;
-  width: 12px; height: 12px;
-  border-radius: 50%;
-  background: var(--ink-900);
-  border: 2px solid var(--signal);
-}
-.tl-item:first-child::before { background: var(--signal); box-shadow: 0 0 0 4px rgba(255,138,61,0.18); }
-
-.tl-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 4px;
-}
-.tl-status { font-weight: 600; color: var(--signal-2); font-size: 0.95rem; }
-.tl-time { font-family: var(--font-mono); font-size: 0.72rem; color: var(--paper-dimmer); white-space: nowrap; }
-.tl-location { color: var(--paper-dim); font-size: 0.86rem; margin-bottom: 3px; }
-.tl-note { color: var(--paper-dimmer); font-size: 0.82rem; font-style: italic; }
-
-/* ==========================================================
-   FOOTER
-   ========================================================== */
-footer.site-footer {
-  border-top: 1px solid var(--line-soft);
-  padding: 22px 24px;
-  text-align: center;
-  color: var(--paper-dimmer);
-  font-size: 0.8rem;
-}
-
-/* ==========================================================
-   PRINT (download waybill)
-   ========================================================== */
-@media print {
-  body { background: #fff !important; color: #111 !important; }
-  body::before { display: none; }
-  header.site-header, footer.site-footer, .route-card, .map-card, .timeline-card,
-  .waybill-actions, .page-eyebrow, #mobileMenu { display: none !important; }
-  main { padding-top: 0 !important; }
-  .waybill {
-    box-shadow: none !important;
-    border: 1px solid #999 !important;
-    background: #fff !important;
-  }
-  .waybill-tracking, .wb-value, .wb-label, .waybill-eyebrow { color: #111 !important; }
-  .barcode { opacity: 0.9 !important; filter: invert(1); }
-  .icon-btn { display: none !important; }
-}
-</style>
+<!-- Shared site styles (same file as home.html) -->
+<link rel="stylesheet" href="styles.css">
+<!-- Tracking-page-only styles (waybill, route rail, ETA, timeline, reveal effect) -->
+<link rel="stylesheet" href="tracking.css">
 </head>
 <body>
 
-<!-- ================= HEADER ================= -->
-<header class="site-header">
+<!-- ================= HEADER (identical to home.html) ================= -->
+<header class="site-header" id="siteHeader">
   <div class="header-inner">
     <a href="home.html" class="brand">
-      <img src="images/images (2).jpeg" alt="AOL Logistics">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="18" class="mark-bg"/>
+          <path d="M12 41 Q23 15 33 29 T52 20" class="mark-route" fill="none" stroke-width="4.2" stroke-linecap="round"/>
+          <circle cx="52" cy="20" r="4.4" class="mark-dot"/>
+          <circle cx="12" cy="41" r="3" class="mark-dot mark-dot-soft"/>
+        </svg>
+      </span>
       <div class="brand-text">
-        <span class="name" data-key="brandTaglineTitle">AOL LOGISTICS</span>
-        <span class="tag" data-key="brandTagline">delivery service at its finest</span>
+        <span class="name" data-key="brand">AOL LOGISTICS</span>
+        <span class="tag" data-key="footer_tagline_short">delivery service at its finest</span>
       </div>
     </a>
 
     <nav class="desktop-nav">
-      <a data-key="navAbout" href="home.html#about">회사 소개</a>
-      <a data-key="navServices" href="home.html#services">서비스</a>
-      <a data-key="navTracking" class="current" href="tracking.html">배송 추적</a>
-      <a data-key="navForm" href="form.html">배송 생성</a>
-      <a data-key="navNews" href="home.html#news">뉴스</a>
-      <a data-key="navContact" href="home.html#contact">연락처</a>
-      <a data-key="navLogin" href="admin/login.html">로그인</a>
+      <a href="about.html" data-key="nav_about">회사 소개</a>
+      <a href="home.html#services" data-key="nav_services">서비스</a>
+      <a href="tracking.html" class="current" data-key="nav_track">배송 추적</a>
+      <a href="form.html" data-key="nav_create">배송 생성</a>
+      <a href="bookshop.html" data-key="nav_news">서점</a>
+      <a href="home.html#contact" data-key="nav_contact">연락처</a>
+      <a href="admin/login.html" class="login-link" data-key="nav_login">로그인</a>
     </nav>
 
     <div class="header-actions">
@@ -701,556 +70,260 @@ footer.site-footer {
 
   <div id="mobileMenu">
     <div class="wrap">
-      <a data-key="navAbout" href="home.html#about">회사 소개</a>
-      <a data-key="navServices" href="home.html#services">서비스</a>
-      <a data-key="navTracking" class="current" href="tracking.html">배송 추적</a>
-      <a data-key="navForm" href="form.html">배송 생성</a>
-      <a data-key="navNews" href="home.html#news">뉴스</a>
-      <a data-key="navContact" href="home.html#contact">연락처</a>
-      <a data-key="navLogin" href="admin/login.html">로그인</a>
+      <a href="home.html" data-key="nav_home">홈</a>
+      <a href="about.html" data-key="nav_about">회사 소개</a>
+      <a href="home.html#services" data-key="nav_services">서비스</a>
+      <a href="tracking.html" class="current" data-key="nav_track">배송 추적</a>
+      <a href="form.html" data-key="nav_create">배송 생성</a>
+      <a href="bookshop.html" data-key="nav_news">서점</a>
+      <a href="home.html#contact" data-key="nav_contact">연락처</a>
+      <a href="admin/login.html" class="login-link" data-key="nav_login">로그인</a>
     </div>
   </div>
 </header>
 
 <!-- ================= MAIN ================= -->
-<main>
+<main class="tracking-main">
   <div class="wrap">
-    <p class="page-eyebrow" data-key="eyebrow">AIR WAYBILL / SHIPMENT MANIFEST</p>
-    <h2 class="page-title"><span data-key="pageTitle">배송 추적</span></h2>
 
-    <!-- Loading state -->
+    <p class="page-eyebrow" data-key="track_eyebrow">AIR WAYBILL / SHIPMENT MANIFEST</p>
+    <h1 class="page-title"><span data-key="track_page_title">실시간 배송 추적</span></h1>
+    <p class="page-sub" data-key="track_page_sub">운송장 번호를 입력하면 현재 위치와 예상 도착일을 바로 확인할 수 있습니다.</p>
+
+    <!-- ============ SEARCH AGAIN BAR ============ -->
+    <form id="trackAgainForm" class="track-again reveal">
+      <span class="tf-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </span>
+      <input type="text" id="trackingInput" name="tracking_no" data-key="tracking_placeholder" placeholder="운송장 번호를 입력하세요" required>
+      <button type="submit" data-key="track_button_text">추적</button>
+    </form>
+
+    <!-- ============ LOADING STATE ============ -->
     <div id="loadingState">
-      <div class="skeleton skeleton-waybill"></div>
+      <div class="skeleton-row">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card skeleton-card-sm"></div>
+      </div>
       <div class="skeleton skeleton-block"></div>
+      <div class="skeleton skeleton-block skeleton-block-lg"></div>
     </div>
 
-    <!-- Error / empty state -->
-    <div id="errorState" class="state-block is-error hidden">
+    <!-- ============ ERROR / EMPTY STATE ============ -->
+    <div id="errorState" class="state-block hidden">
       <svg class="state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
       <p id="errorText" data-key="invalidCodeMessage">유효하지 않은 운송장 코드입니다.</p>
+      <a href="tracking-form.html" class="btn-secondary" data-key="try_again_btn">다시 시도</a>
     </div>
 
-    <!-- ============ WAYBILL CARD ============ -->
-    <div id="waybillCard" class="waybill hidden">
-      <div class="waybill-head">
-        <div>
-          <div class="waybill-eyebrow" data-key="trackingNoLabel">운송장 번호</div>
-          <div class="waybill-tracking">
-            <span id="summaryTrackingNo">-</span>
-            <button class="icon-btn" id="copyTrackingBtn" title="Copy" aria-label="Copy tracking number">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+    <!-- ============ RESULTS ============ -->
+    <div id="resultsWrap" class="hidden">
+
+      <!-- summary row: waybill + ETA -->
+      <div class="tracking-summary-grid">
+
+        <!-- WAYBILL CARD -->
+        <div class="waybill-card reveal">
+          <div class="waybill-head">
+            <div>
+              <div class="wb-eyebrow" data-key="trackingNoLabel">운송장 번호</div>
+              <div class="waybill-tracking">
+                <span id="summaryTrackingNo">-</span>
+                <button class="icon-btn reveal" id="copyTrackingBtn" title="Copy" aria-label="Copy tracking number">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+                </button>
+              </div>
+            </div>
+            <div id="statusBadge" class="status-badge st-pending">-</div>
+          </div>
+
+          <div class="wb-divider"></div>
+
+          <div class="waybill-body">
+            <div class="wb-field">
+              <div class="wb-label" data-key="customerLabel">고객</div>
+              <div class="wb-value" id="summaryCustomer">-</div>
+            </div>
+            <div class="wb-field">
+              <div class="wb-label" data-key="serviceLabel">서비스</div>
+              <div class="wb-value" id="summaryService">-</div>
+            </div>
+            <div class="wb-field">
+              <div class="wb-label" data-key="originLabel">출발지</div>
+              <div class="wb-value" id="summaryOrigin">-</div>
+            </div>
+            <div class="wb-field">
+              <div class="wb-label" data-key="destinationLabel">도착지</div>
+              <div class="wb-value" id="summaryDestination">-</div>
+            </div>
+            <div class="wb-field">
+              <div class="wb-label" data-key="weightLabel">중량</div>
+              <div class="wb-value" id="summaryWeight">-</div>
+            </div>
+            <div class="wb-field wb-span-2">
+              <div class="wb-label" data-key="locationLabel">현재 위치</div>
+              <div class="wb-value wb-mono" id="summaryLocation">-</div>
+            </div>
+          </div>
+
+          <div class="waybill-actions">
+            <span class="live-pill"><span class="live-dot"></span><span data-key="liveLabel">실시간 갱신</span></span>
+            <span class="live-pill" id="updatedPill"><span id="updatedText">-</span></span>
+            <button class="pill-btn reveal" id="refreshBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6M3 22v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.5-4.5L21 8M20.5 15a9 9 0 0 1-14.5 4.5L3 16"/></svg>
+              <span data-key="refreshBtn">새로고침</span>
+            </button>
+            <button class="pill-btn reveal" id="shareBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
+              <span data-key="shareBtn">공유</span>
+            </button>
+            <button class="pill-btn reveal" id="printBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+              <span data-key="printBtn">인쇄</span>
             </button>
           </div>
         </div>
-        <div id="statusSeal" class="seal st-pending">-</div>
-      </div>
 
-      <div class="barcode"></div>
-      <div class="perf"></div>
-
-      <div class="waybill-body">
-        <div class="wb-field">
-          <div class="wb-label" data-key="customerLabel">고객</div>
-          <div class="wb-value" id="summaryCustomer">-</div>
-        </div>
-        <div class="wb-field">
-          <div class="wb-label" data-key="originLabel">출발지</div>
-          <div class="wb-value" id="summaryOrigin">-</div>
-        </div>
-        <div class="wb-field">
-          <div class="wb-label" data-key="destinationLabel">도착지</div>
-          <div class="wb-value" id="summaryDestination">-</div>
-        </div>
-        <div class="wb-field wb-status">
-          <div class="wb-label" data-key="statusLabel">상태</div>
-          <div class="wb-value" id="summaryStatus">-</div>
-        </div>
-        <div class="wb-field wb-location" style="grid-column: 1 / -1;">
-          <div class="wb-label" data-key="locationLabel">현재 위치</div>
-          <div class="wb-value" id="summaryLocation">-</div>
+        <!-- ETA CARD -->
+        <div class="eta-card reveal">
+          <div class="eta-eyebrow" data-key="etaLabel">예상 도착</div>
+          <div class="eta-date" id="etaDate">-</div>
+          <div class="eta-days" id="etaDays">-</div>
+          <div class="eta-ring-wrap">
+            <svg class="eta-ring" viewBox="0 0 120 120">
+              <circle class="eta-ring-track" cx="60" cy="60" r="52"></circle>
+              <circle class="eta-ring-fill" id="etaRingFill" cx="60" cy="60" r="52"></circle>
+            </svg>
+            <div class="eta-ring-label" id="etaPercent">0%</div>
+          </div>
+          <div class="eta-note" id="etaNote" data-key="etaNoteDefault">최신 위치 업데이트를 기준으로 계산됩니다.</div>
         </div>
       </div>
 
-      <div class="waybill-actions">
-        <span class="live-pill"><span class="live-dot"></span><span id="liveLabel" data-key="liveLabel">실시간</span></span>
-        <span class="live-pill" id="updatedPill"><span id="updatedText">-</span></span>
-        <button class="pill-btn" id="refreshBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6M3 22v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.5-4.5L21 8M20.5 15a9 9 0 0 1-14.5 4.5L3 16"/></svg>
-          <span data-key="refreshBtn">새로고침</span>
-        </button>
-        <button class="pill-btn" id="shareBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
-          <span data-key="shareBtn">공유</span>
-        </button>
-        <button class="pill-btn" id="printBtn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
-          <span data-key="printBtn">인쇄</span>
-        </button>
-      </div>
-    </div>
+      <!-- ============ ROUTE PROGRESS ============ -->
+      <div class="route-card reveal">
+        <p class="section-label" data-key="shipmentProgress">배송 진행 상황</p>
+        <div class="route-rail">
+          <div class="route-track"></div>
+          <div class="route-fill" id="routeFill"></div>
+          <div class="route-vessel" id="routeVessel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16V6a1 1 0 0 1 1-1h9v11"/><path d="M13 9h4l4 4v3h-8"/><circle cx="7.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg>
+          </div>
 
-    <!-- ============ ROUTE PROGRESS ============ -->
-    <div id="routeCard" class="route-card hidden">
-      <p class="section-label" data-key="shipmentProgress">배송 진행 상황</p>
-      <div class="route-rail">
-        <div class="route-track"></div>
-        <div class="route-fill" id="routeFill"></div>
-        <div class="route-vessel" id="routeVessel">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l9 16H3z"/></svg>
-        </div>
-
-        <div class="waypoint" id="wpPending">
-          <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
-          <div class="wp-label" data-key="orderPlaced">주문 접수</div>
-        </div>
-        <div class="waypoint" id="wpTransit">
-          <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="1"/><path d="M8 7V4h8v3"/></svg></div>
-          <div class="wp-label" data-key="preparing">준비 중</div>
-        </div>
-        <div class="waypoint" id="wpShipped">
-          <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16V6a1 1 0 0 1 1-1h9v11"/><path d="M13 9h4l4 4v3h-8"/><circle cx="7.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg></div>
-          <div class="wp-label" data-key="shipped">배송 중</div>
-        </div>
-        <div class="waypoint" id="wpDelivered">
-          <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>
-          <div class="wp-label" data-key="delivered">배송 완료</div>
+          <div class="waypoint reveal" id="wpPending">
+            <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+            <div class="wp-label" data-key="orderPlaced">주문 접수</div>
+          </div>
+          <div class="waypoint reveal" id="wpTransit">
+            <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="1"/><path d="M8 7V4h8v3"/></svg></div>
+            <div class="wp-label" data-key="preparing">준비 중</div>
+          </div>
+          <div class="waypoint reveal" id="wpShipped">
+            <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16V6a1 1 0 0 1 1-1h9v11"/><path d="M13 9h4l4 4v3h-8"/><circle cx="7.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg></div>
+            <div class="wp-label" data-key="shipped">배송 중</div>
+          </div>
+          <div class="waypoint reveal" id="wpDelivered">
+            <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>
+            <div class="wp-label" data-key="delivered">배송 완료</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ============ MAP ============ -->
-    <div id="mapCard" class="map-card hidden"><div id="map"></div></div>
+      <!-- ============ MAP ============ -->
+      <div id="mapCard" class="map-card hidden reveal"><div id="map"></div></div>
 
-    <!-- ============ TIMELINE ============ -->
-    <div id="timelineCard" class="timeline-card hidden">
-      <p class="section-label" data-key="trackingUpdates">배송 업데이트</p>
-      <div id="timeline"></div>
+      <!-- ============ TIMELINE ============ -->
+      <div class="timeline-card reveal">
+        <p class="section-label" data-key="trackingUpdates">배송 업데이트</p>
+        <div id="timeline"></div>
+      </div>
+
     </div>
   </div>
 </main>
 
+<!-- ================= FOOTER (identical to home.html) ================= -->
 <footer class="site-footer">
-  <p data-key="footerText">© 2025 AOL Logistics. All rights reserved.</p>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-row">
+          <span class="brand-mark brand-mark-sm" aria-hidden="true">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="64" rx="18" class="mark-bg"/>
+              <path d="M12 41 Q23 15 33 29 T52 20" class="mark-route" fill="none" stroke-width="4.2" stroke-linecap="round"/>
+              <circle cx="52" cy="20" r="4.4" class="mark-dot"/>
+            </svg>
+          </span>
+          <h4 data-key="footer_brand">AOL LOGISTICS</h4>
+        </div>
+        <p data-key="footer_tagline">신뢰할 수 있는 해운 및 물류 솔루션으로 대륙을 연결합니다.</p>
+      </div>
+      <div>
+        <h4 data-key="footer_links_heading">빠른 링크</h4>
+        <ul class="footer-links">
+          <li><a href="home.html" data-key="nav_home">홈</a></li>
+          <li><a href="about.html" data-key="nav_about">회사 소개</a></li>
+          <li><a href="home.html#services" data-key="nav_services">서비스</a></li>
+          <li><a href="tracking.html" data-key="nav_track">배송 추적</a></li>
+          <li><a href="form.html" data-key="nav_create">배송 생성</a></li>
+          <li><a href="admin/login.html" data-key="nav_login">로그인</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-key="footer_contact_heading">연락처</h4>
+        <p data-key="footer_email">이메일: logisticsaol6@gmail.com</p>
+        <p data-key="footer_phone">전화: +1 800 173 5507</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p data-key="copyright_text">© 2025 AOL LOGISTICS. All rights reserved.</p>
+    </div>
+  </div>
 </footer>
 
-<!-- Leaflet JS -->
+<button id="scrollTopBtn" aria-label="Scroll to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- ================= CHAT WIDGET (identical to home.html) ================= -->
+<button id="chatFab" aria-label="Open chat" aria-expanded="false">
+  <svg class="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-7.5 13.9L3 21l4.3-1.4A9 9 0 1 0 12 3Z"/><circle cx="8.5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="15.5" cy="12" r="1"/></svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  <span id="chatUnread" class="hidden">1</span>
+</button>
+
+<div id="chatPanel" role="dialog" aria-label="Chat">
+  <div class="chat-head">
+    <span class="chat-avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-7.5 13.9L3 21l4.3-1.4A9 9 0 1 0 12 3Z"/><circle cx="8.5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="15.5" cy="12" r="1"/></svg>
+    </span>
+    <div class="ch-titles">
+      <div class="ch-name" data-key="chat_title">AOL 고객 지원</div>
+      <div class="ch-status" id="chatStatusLabel" data-key="chat_status_bot"><span class="ch-dot"></span>AI 어시스턴트</div>
+    </div>
+    <button class="ch-close" id="chatCloseBtn" aria-label="Close chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-foot">
+    <textarea id="chatInput" rows="1" data-key="chat_input_placeholder" placeholder="메시지를 입력하세요..."></textarea>
+    <button id="chatSendBtn" aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Leaflet -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-<script>
-/***** CONFIG *****/
-const SUPABASE_URL = "https://rtgvylkbndrmwntaqkfx.supabase.co";
-const SUPABASE_KEY = "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB";
-const { createClient } = supabase;
-const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
+<!-- Shared site behavior: header/menu/lang/chat (same module as home.html) -->
+<script type="module" src="script.js"></script>
 
-/***** DOM refs *****/
-const menuBtn = document.getElementById("menuBtn");
-const mobileMenu = document.getElementById("mobileMenu");
-const langToggle = document.getElementById("langToggle");
+<!-- Tracking-page logic: fetch shipment, render waybill/ETA/route/map/timeline,
+     live refresh, and the Windows-11-style pointer "reveal" glow on .reveal cards -->
+<script type="module" src="tracking.js"></script>
 
-const loadingState = document.getElementById("loadingState");
-const errorState = document.getElementById("errorState");
-const errorText = document.getElementById("errorText");
-const waybillCard = document.getElementById("waybillCard");
-const routeCard = document.getElementById("routeCard");
-const mapCard = document.getElementById("mapCard");
-const timelineCard = document.getElementById("timelineCard");
-const timelineEl = document.getElementById("timeline");
-const routeFill = document.getElementById("routeFill");
-const routeVessel = document.getElementById("routeVessel");
-const statusSeal = document.getElementById("statusSeal");
-const updatedText = document.getElementById("updatedText");
-
-const params = new URLSearchParams(window.location.search);
-const trackingNo = params.get("tracking_no");
-
-/***** i18n *****/
-const translations = {
-  ko: {
-    brandTaglineTitle: "AOL LOGISTICS", brandTagline: "최상의 배송 서비스",
-    navAbout: "회사 소개", navServices: "서비스", navTracking: "배송 추적",
-    navForm: "배송 생성", navNews: "뉴스", navContact: "연락처", navLogin: "로그인",
-    eyebrow: "항공 화물 운송장 / 배송 명세서",
-    pageTitle: "배송 추적",
-    trackingNoLabel: "운송장 번호", customerLabel: "고객", originLabel: "출발지",
-    destinationLabel: "도착지", statusLabel: "상태", locationLabel: "현재 위치",
-    shipmentProgress: "배송 진행 상황",
-    orderPlaced: "주문 접수", preparing: "준비 중", shipped: "배송 중", delivered: "배송 완료",
-    trackingUpdates: "배송 업데이트",
-    loadingShipment: "배송 정보를 불러오는 중...",
-    invalidCodeMessage: "유효하지 않은 운송장 코드입니다:",
-    notAvailable: "정보 없음", unknown: "알 수 없음",
-    liveLabel: "실시간 갱신", refreshBtn: "새로고침", shareBtn: "공유", printBtn: "인쇄",
-    updatedJustNow: "방금 갱신됨", updatedAgo: "분 전 갱신",
-    copySuccess: "운송장 번호를 복사했습니다", copyFail: "복사에 실패했습니다",
-    shareSuccess: "링크가 복사되었습니다", noTimeline: "아직 배송 업데이트가 없습니다.",
-    footerText: "© 2025 AOL 물류. 모든 권리 보유."
-  },
-  en: {
-    brandTaglineTitle: "AOL LOGISTICS", brandTagline: "delivery service at its finest",
-    navAbout: "About", navServices: "Services", navTracking: "Track Shipment",
-    navForm: "Create Shipment", navNews: "News", navContact: "Contact", navLogin: "Login",
-    eyebrow: "Air Waybill / Shipment Manifest",
-    pageTitle: "Track Your Shipment",
-    trackingNoLabel: "Tracking No.", customerLabel: "Customer", originLabel: "Origin",
-    destinationLabel: "Destination", statusLabel: "Status", locationLabel: "Current Location",
-    shipmentProgress: "Shipment Progress",
-    orderPlaced: "Order Placed", preparing: "Preparing", shipped: "Shipped", delivered: "Delivered",
-    trackingUpdates: "Tracking Updates",
-    loadingShipment: "Loading shipment...",
-    invalidCodeMessage: "Invalid tracking code:",
-    notAvailable: "Not available", unknown: "Unknown",
-    liveLabel: "Live updates", refreshBtn: "Refresh", shareBtn: "Share", printBtn: "Print",
-    updatedJustNow: "Updated just now", updatedAgo: "m ago",
-    copySuccess: "Tracking number copied", copyFail: "Couldn't copy",
-    shareSuccess: "Link copied to clipboard", noTimeline: "No tracking updates yet.",
-    footerText: "© 2025 AOL Logistics. All rights reserved."
-  }
-};
-
-let currentLang = localStorage.getItem('site_lang') || 'ko';
-function t(key) { return (translations[currentLang] && translations[currentLang][key]) || key; }
-
-function applyTranslations() {
-  document.querySelectorAll('[data-key]').forEach(el => {
-    const key = el.getAttribute('data-key');
-    if (translations[currentLang] && translations[currentLang][key]) el.textContent = translations[currentLang][key];
-  });
-  document.documentElement.lang = currentLang === 'ko' ? 'ko' : 'en';
-  langToggle.textContent = currentLang === 'ko' ? 'EN' : '한국어';
-}
-
-langToggle.addEventListener('click', () => {
-  currentLang = currentLang === 'ko' ? 'en' : 'ko';
-  localStorage.setItem('site_lang', currentLang);
-  applyTranslations();
-  if (fetchedShipment) renderAll();
-});
-
-/***** mobile menu *****/
-let menuOpen = false;
-menuBtn.addEventListener('click', () => {
-  menuOpen = !menuOpen;
-  mobileMenu.classList.toggle('open', menuOpen);
-  menuBtn.setAttribute('aria-expanded', String(menuOpen));
-});
-
-/***** helpers *****/
-function escapeHtml(str = "") {
-  return String(str).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-}
-function showToastLike(msg) {
-  updatedPillFlash(msg);
-}
-function updatedPillFlash(msg) {
-  const prev = updatedText.textContent;
-  updatedText.textContent = msg;
-  setTimeout(() => { updatedText.textContent = prev; }, 2200);
-}
-
-/***** status mapping *****/
-const statusMapping = {
-  "Order Placed":       { key: "orderPlaced",  wp: "wpPending",   seal: "st-pending" },
-  "Preparing Shipment": { key: "preparing",    wp: "wpTransit",   seal: "st-transit" },
-  "Shipped":            { key: "shipped",      wp: "wpShipped",   seal: "st-shipped" },
-  "Delivered":          { key: "delivered",    wp: "wpDelivered", seal: "st-delivered" }
-};
-const orderStatuses = Object.keys(statusMapping);
-
-function normalizeProgress(raw) {
-  if (!raw) return "Order Placed";
-  const trimmed = String(raw).trim();
-  if (orderStatuses.includes(trimmed)) return trimmed;
-  const koMap = {
-    "주문 접수": "Order Placed", "접수": "Order Placed",
-    "준비 중": "Preparing Shipment", "준비": "Preparing Shipment",
-    "배송 중": "Shipped", "배송": "Shipped",
-    "배송 완료": "Delivered", "완료": "Delivered"
-  };
-  if (koMap[trimmed]) return koMap[trimmed];
-  const lower = trimmed.toLowerCase();
-  if (lower.includes("deliver") || lower.includes("완료")) return "Delivered";
-  if (lower.includes("ship")) return "Shipped";
-  if (lower.includes("prepar") || lower.includes("준비")) return "Preparing Shipment";
-  if (lower.includes("order") || lower.includes("placed") || lower.includes("접수")) return "Order Placed";
-  return "Order Placed";
-}
-
-function timeAgo(dateInput) {
-  if (!dateInput) return "";
-  const seconds = Math.floor((Date.now() - new Date(dateInput).getTime()) / 1000);
-  if (seconds < 5) return t('updatedJustNow');
-  const mins = Math.floor(seconds / 60);
-  if (mins < 60) return `${mins}${t('updatedAgo')}`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return currentLang === 'ko' ? `${hrs}시간 전 갱신` : `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return currentLang === 'ko' ? `${days}일 전 갱신` : `${days}d ago`;
-}
-
-/***** state *****/
-let fetchedShipment = null;
-let fetchedUpdates = [];
-let mapInstance = null;
-let mapMarker = null;
-
-function highlightRoute(normalized) {
-  const idx = Math.max(0, orderStatuses.indexOf(normalized));
-  const ids = ["wpPending", "wpTransit", "wpShipped", "wpDelivered"];
-  ids.forEach((id, i) => {
-    const el = document.getElementById(id);
-    el.classList.remove('done', 'current');
-    if (i < idx) el.classList.add('done');
-    if (i === idx) el.classList.add('current');
-  });
-  const percent = (idx / (orderStatuses.length - 1)) * 100;
-  routeFill.style.width = `${percent}%`;
-  routeVessel.style.left = `calc(${percent}% + ${20 - (percent/100)*40}px)`;
-  // seal
-  const cfg = statusMapping[normalized] || statusMapping["Order Placed"];
-  statusSeal.className = `seal ${cfg.seal}`;
-  statusSeal.textContent = t(cfg.key);
-}
-
-function renderTimeline() {
-  if (!fetchedUpdates.length) {
-    timelineEl.innerHTML = `<p style="color:var(--paper-dimmer); font-size:0.88rem;">${t('noTimeline')}</p>`;
-    return;
-  }
-  timelineEl.innerHTML = fetchedUpdates.map(update => {
-    const raw = update.status || update.progress || "";
-    const norm = normalizeProgress(raw);
-    const cfg = statusMapping[norm] || statusMapping["Order Placed"];
-    const displayStatus = t(cfg.key);
-    const displayLocation = update.location || t('unknown');
-    const timeStr = update.created_at ? new Date(update.created_at).toLocaleString(currentLang === 'ko' ? 'ko-KR' : 'en-US') : "";
-    const noteHtml = update.note ? `<p class="tl-note">${escapeHtml(update.note)}</p>` : "";
-    return `
-      <div class="tl-item">
-        <div class="tl-top">
-          <span class="tl-status">${escapeHtml(displayStatus)}</span>
-          <span class="tl-time">${escapeHtml(timeStr)}</span>
-        </div>
-        <p class="tl-location">${escapeHtml(displayLocation)}</p>
-        ${noteHtml}
-      </div>
-    `;
-  }).join("");
-}
-
-function renderAll() {
-  if (!fetchedShipment) return;
-
-  document.getElementById("summaryTrackingNo").textContent = fetchedShipment.tracking_no || "-";
-  document.getElementById("summaryCustomer").textContent = fetchedShipment.receiver_name || fetchedShipment.customer_name || "-";
-  document.getElementById("summaryOrigin").textContent = fetchedShipment.origin || "-";
-  document.getElementById("summaryDestination").textContent = fetchedShipment.receiver_country || fetchedShipment.destination || "-";
-
-  const latest = fetchedUpdates.length ? fetchedUpdates[0] : null;
-  const rawStatus = latest?.status || latest?.progress || fetchedShipment.status || "Order Placed";
-  const normalized = normalizeProgress(rawStatus);
-  const cfg = statusMapping[normalized];
-  document.getElementById("summaryStatus").textContent = t(cfg.key);
-  document.getElementById("summaryLocation").textContent =
-    latest?.location || fetchedShipment.location_text || fetchedShipment.location || t('notAvailable');
-
-  updatedText.textContent = latest?.created_at ? timeAgo(latest.created_at) : t('updatedJustNow');
-
-  highlightRoute(normalized);
-  renderTimeline();
-  applyTranslations();
-}
-
-/***** map *****
- * NOTE: CARTO's free raster tile endpoint (basemaps.cartocdn.com) now
- * requires a signed-up API key for unauthenticated requests - without one,
- * tiles come back watermarked or fail to load. Switched to Esri's
- * "World Dark Gray Base" canvas, which is free and needs no key, and
- * added an automatic fallback to plain OpenStreetMap tiles if that ever
- * fails too, so the map card never silently goes blank.
- *****/
-function buildTileLayer(map) {
-  const primary = L.tileLayer(
-    'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
-    {
-      attribution: '&copy; <a href="https://www.esri.com">Esri</a>, HERE, Garmin, &copy; OpenStreetMap contributors',
-      maxZoom: 16,
-      minZoom: 2
-    }
-  );
-
-  let fellBack = false;
-  primary.on('tileerror', () => {
-    if (fellBack) return;
-    fellBack = true;
-    console.warn('Primary map tiles failed to load - falling back to OpenStreetMap tiles.');
-    map.removeLayer(primary);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
-      subdomains: 'abc',
-      maxZoom: 19,
-      minZoom: 2
-    }).addTo(map);
-  });
-
-  return primary;
-}
-
-async function updateMapTo(lat, lng, popupText) {
-  if (!lat || !lng) { mapCard.classList.add('hidden'); return; }
-  mapCard.classList.remove('hidden');
-
-  const pinIcon = L.divIcon({ className: '', html: '<div class="map-pin"></div>', iconSize: [16, 16] });
-
-  if (!mapInstance) {
-    mapInstance = L.map('map', { zoomControl: true }).setView([lat, lng], 11);
-    buildTileLayer(mapInstance).addTo(mapInstance);
-    mapMarker = L.marker([lat, lng], { icon: pinIcon }).addTo(mapInstance).bindPopup(popupText || '');
-  } else {
-    mapInstance.setView([lat, lng], mapInstance.getZoom() || 11);
-    if (mapMarker) mapMarker.setLatLng([lat, lng]).setPopupContent(popupText || '');
-    else mapMarker = L.marker([lat, lng], { icon: pinIcon }).addTo(mapInstance).bindPopup(popupText || '');
-  }
-}
-
-async function deriveCoordinates(shipment, latestUpdate) {
-  const geocodeCandidate = latestUpdate?.location || shipment.location || shipment.location_text;
-  if (geocodeCandidate && typeof geocodeCandidate === 'string') {
-    try {
-      const q = encodeURIComponent(geocodeCandidate);
-      const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${q}`;
-      const resp = await fetch(url, { headers: { 'Accept': 'application/json' } });
-      if (!resp.ok) throw new Error('Geocode failed');
-      const j = await resp.json();
-      if (Array.isArray(j) && j.length > 0) return [Number(j[0].lat), Number(j[0].lon)];
-    } catch (err) { console.warn('Geocode error', err); }
-  }
-  return [null, null];
-}
-
-/***** load *****/
-async function loadTracking({ silent = false } = {}) {
-  if (!trackingNo) { window.location.href = "tracking-form.html"; return; }
-
-  if (!silent) {
-    loadingState.classList.remove('hidden');
-    errorState.classList.add('hidden');
-    waybillCard.classList.add('hidden');
-    routeCard.classList.add('hidden');
-    timelineCard.classList.add('hidden');
-  }
-
-  try {
-    const { data: shipment, error: shipmentError } = await supabaseClient
-      .from("user_info").select("*").eq("tracking_no", trackingNo).maybeSingle();
-
-    if (shipmentError || !shipment) {
-      const q = new URLSearchParams({ error: "invalid", code: trackingNo });
-      window.location.href = `tracking-form.html?${q.toString()}`;
-      return;
-    }
-
-    const { data: updates, error: updatesError } = await supabaseClient
-      .from("tracking_updates").select("*").eq("shipment_id", shipment.id)
-      .order("created_at", { ascending: false });
-    if (updatesError) console.warn('updates error', updatesError);
-
-    fetchedShipment = shipment;
-    fetchedUpdates = updates || [];
-
-    loadingState.classList.add('hidden');
-    waybillCard.classList.remove('hidden');
-    routeCard.classList.remove('hidden');
-    timelineCard.classList.remove('hidden');
-
-    renderAll();
-
-    const latestUpdate = fetchedUpdates[0] || null;
-    const [lat, lng] = await deriveCoordinates(fetchedShipment, latestUpdate);
-    if (lat && lng) {
-      await updateMapTo(lat, lng, `<strong>${escapeHtml(fetchedShipment.receiver_name || 'Package')}</strong><br>${escapeHtml(latestUpdate?.location || fetchedShipment.location || '')}`);
-    } else {
-      mapCard.classList.add('hidden');
-    }
-  } catch (err) {
-    console.error(err);
-    loadingState.classList.add('hidden');
-    errorState.classList.remove('hidden');
-    errorText.textContent = `${t('invalidCodeMessage')} ${trackingNo}`;
-  }
-}
-
-/***** live refresh *****/
-let refreshTimer = null;
-async function refreshTrackingIfChanged() {
-  if (!fetchedShipment) return;
-  try {
-    const { data: shipmentFresh, error } = await supabaseClient
-      .from("user_info").select("*").eq("id", fetchedShipment.id).maybeSingle();
-    if (error || !shipmentFresh) return;
-
-    const { data: updatesFresh } = await supabaseClient
-      .from("tracking_updates").select("*").eq("shipment_id", fetchedShipment.id)
-      .order("created_at", { ascending: false });
-
-    const changed = JSON.stringify(updatesFresh) !== JSON.stringify(fetchedUpdates) ||
-      JSON.stringify(shipmentFresh) !== JSON.stringify(fetchedShipment);
-
-    if (changed) {
-      fetchedShipment = shipmentFresh;
-      fetchedUpdates = updatesFresh || [];
-      renderAll();
-      const latestUpdate = fetchedUpdates[0] || null;
-      const [lat, lng] = await deriveCoordinates(fetchedShipment, latestUpdate);
-      if (lat && lng) {
-        updateMapTo(lat, lng, `<strong>${escapeHtml(fetchedShipment.receiver_name || 'Package')}</strong><br>${escapeHtml(latestUpdate?.location || fetchedShipment.location || '')}`);
-      }
-    }
-  } catch (err) { console.warn('refresh error', err); }
-}
-
-/***** action buttons *****/
-document.getElementById("copyTrackingBtn").addEventListener('click', () => {
-  const val = document.getElementById("summaryTrackingNo").textContent;
-  if (!val || val === '-') return;
-  navigator.clipboard?.writeText(val)
-    .then(() => showToastLike(t('copySuccess')))
-    .catch(() => showToastLike(t('copyFail')));
-});
-
-document.getElementById("refreshBtn").addEventListener('click', () => {
-  refreshTrackingIfChanged();
-});
-
-document.getElementById("shareBtn").addEventListener('click', async () => {
-  const url = window.location.href;
-  if (navigator.share) {
-    try { await navigator.share({ title: 'AOL Logistics', url }); return; } catch (_) {}
-  }
-  navigator.clipboard?.writeText(url).then(() => showToastLike(t('shareSuccess')));
-});
-
-document.getElementById("printBtn").addEventListener('click', () => window.print());
-
-/***** init *****/
-applyTranslations();
-loadTracking().then(() => {
-  if (refreshTimer) clearInterval(refreshTimer);
-  refreshTimer = setInterval(refreshTrackingIfChanged, 15000);
-});
-window.addEventListener('beforeunload', () => { if (refreshTimer) clearInterval(refreshTimer); });
-
-(function showErrorIfPresent() {
-  const err = params.get('error');
-  if (err === 'invalid') {
-    const code = params.get('code') || '';
-    loadingState.classList.add('hidden');
-    errorState.classList.remove('hidden');
-    errorText.textContent = `${t('invalidCodeMessage')} ${code}`;
-  }
-})();
-</script>
-
-<style>.hidden { display: none !important; }</style>
 </body>
 </html>
