@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>배송 생성 - AOL LOGISTICS</title>
-<meta name="description" content="AOL Logistics - Create a new shipment.">
+<title data-key="page_title">배송 추적 - AOL LOGISTICS</title>
+<meta name="description" content="AOL Logistics - Track your shipment easily and securely.">
 
-<!-- Favicon -->
-<link rel="icon" type="image/png" href="images/images (2).jpeg" />
+<!-- Favicon (same mark as home.html) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B3D68'/%3E%3Cpath d='M14 40 Q24 16 34 30 T50 22' fill='none' stroke='%23FFFFFF' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='22' r='4' fill='%23FFFFFF'/%3E%3C/svg%3E" />
 
-<!-- Google tag (gtag.js) -->
+<!-- Google tag -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5C2122TVD"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -18,50 +18,65 @@
   gtag('config', 'G-G5C2122TVD');
 </script>
 
-<!-- Fonts: same system as home.html / tracking.html for brand consistency -->
+<!-- Fonts — same pairing as home.html / tracking.html / about.html -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 
 <!-- AOS (scroll reveal) -->
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
 <style>
 /* ==========================================================
-   DESIGN TOKENS — identical to home.html / tracking.html so
-   every page reads as one product: ink-navy field, signal-
-   amber ink. All CSS lives in this file, no Tailwind CDN.
+   DESIGN TOKENS — same palette as home.html / tracking.html /
+   about.html. Single self-contained file, no external CSS/JS.
    ========================================================== */
 :root {
-  --ink-950: #060a18;
-  --ink-900: #0a1128;
-  --ink-800: #101a37;
-  --ink-700: #16214a;
-  --ink-650: #1b2854;
-  --line: #263562;
-  --line-soft: #1c294f;
-  --paper: #eef1f8;
-  --paper-dim: #9aa5c4;
-  --paper-dimmer: #6e7aa0;
-  --signal: #ff8a3d;
-  --signal-2: #ffb066;
-  --signal-ink: #3a1c06;
-  --ok: #35d99a;
-  --ok-ink: #06281c;
-  --err: #ff6b6b;
-  --font-display: 'Space Grotesk', 'Noto Sans KR', sans-serif;
-  --font-body: 'Inter', 'Noto Sans KR', sans-serif;
-  --font-mono: 'JetBrains Mono', 'Noto Sans KR', monospace;
+  --sky-950: #071E33;
+  --sky-900: #0B3D68;
+  --sky-800: #0F4C7C;
+  --sky-700: #145E96;
+  --sky-600: #1B74B3;
+  --sky-500: #2E8FD1;
+  --sky-400: #5FAEE0;
+  --sky-200: #BFE0F5;
+  --sky-100: #E4F2FC;
+  --sky-50:  #F4FAFE;
+  --white:   #FFFFFF;
+
+  --ink:        #0E1E30;
+  --ink-dim:    #46617A;
+  --ink-dimmer: #7C93A8;
+
+  --surface:        #FFFFFF;
+  --surface-glass:  rgba(255, 255, 255, 0.72);
+  --surface-glass-strong: rgba(255, 255, 255, 0.86);
+  --line: rgba(11, 61, 104, 0.12);
+  --line-soft: rgba(11, 61, 104, 0.07);
+
+  --ok: #1FA97A;
+  --err: #E5484D;
+
+  --font-display: 'Manrope', 'Noto Sans KR', sans-serif;
+  --font-body: 'Inter', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --radius-xl: 26px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+
+  --shadow-fluent: 0 1px 2px rgba(11, 61, 104, 0.06), 0 12px 28px -12px rgba(11, 61, 104, 0.18);
+  --shadow-fluent-lg: 0 2px 6px rgba(11, 61, 104, 0.08), 0 30px 60px -24px rgba(11, 61, 104, 0.28);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--ink-950);
+  background: var(--white);
   background-image:
-    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(255,138,61,0.07), transparent 60%),
-    radial-gradient(ellipse 700px 500px at 100% 10%, rgba(58,90,190,0.12), transparent 55%);
-  color: var(--paper);
+    radial-gradient(ellipse 900px 500px at 12% -8%, rgba(46, 143, 209, 0.10), transparent 60%),
+    radial-gradient(ellipse 800px 520px at 100% 6%, rgba(11, 61, 104, 0.06), transparent 55%);
+  color: var(--ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
@@ -72,11 +87,11 @@ body {
 
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
-::selection { background: var(--signal); color: var(--ink-950); }
+::selection { background: var(--sky-500); color: var(--white); }
 ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--ink-900); }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
-:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--sky-50); }
+::-webkit-scrollbar-thumb { background: var(--sky-200); border-radius: 8px; }
+:focus-visible { outline: 2px solid var(--sky-500); outline-offset: 3px; border-radius: 3px; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -88,224 +103,421 @@ img { max-width: 100%; display: block; }
 }
 
 .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
-.section { padding: 60px 0; }
-@media (max-width: 640px) { .section { padding: 44px 0; } }
+.section { padding: 80px 0; }
+@media (max-width: 640px) { .section { padding: 54px 0; } }
 
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--signal-2);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
+  font-family: var(--font-body); font-size: 0.78rem; font-weight: 600;
+  color: var(--sky-600); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
 }
-.eyebrow::before { content: ""; width: 18px; height: 1.5px; background: var(--signal); display: inline-block; }
+.eyebrow::before { content: ""; width: 16px; height: 3px; border-radius: 4px; background: linear-gradient(90deg, var(--sky-500), var(--sky-900)); display: inline-block; }
+.section-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.6rem, 3.4vw, 2.35rem); letter-spacing: -0.015em; color: var(--sky-950); margin-bottom: 14px; }
+.section-sub { color: var(--ink-dim); max-width: 640px; font-size: 0.98rem; line-height: 1.65; }
 
 /* ==========================================================
-   HEADER — shared component with home.html / tracking.html
+   BRAND MARK
+   ========================================================== */
+.brand-mark { width: 42px; height: 42px; flex-shrink: 0; display: block; }
+.brand-mark svg { width: 100%; height: 100%; display: block; }
+.mark-bg { fill: var(--sky-900); }
+.mark-route { stroke: var(--white); }
+.mark-dot { fill: var(--white); }
+.mark-dot-soft { fill: var(--sky-400); opacity: 0.9; }
+.brand-mark-sm { width: 32px; height: 32px; }
+
+/* ==========================================================
+   HEADER
    ========================================================== */
 header.site-header {
   position: fixed; top: 0; left: 0; width: 100%; z-index: 900;
-  background: rgba(8,13,30,0.7);
-  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
   border-bottom: 1px solid var(--line-soft);
-  transition: background 0.25s ease, padding 0.25s ease;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
 }
-header.site-header.scrolled { background: rgba(8,13,30,0.92); }
+header.site-header.scrolled { background: var(--surface-glass-strong); box-shadow: 0 8px 30px -18px rgba(11, 61, 104, 0.35); }
 
-.header-inner {
-  max-width: 1160px; margin: 0 auto; padding: 14px 24px;
-  display: flex; align-items: center; justify-content: space-between; gap: 16px;
-}
-
-.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.brand img {
-  height: 40px; width: 40px; border-radius: 50%; object-fit: cover;
-  border: 1px solid var(--line); flex-shrink: 0; display: none;
-}
-@media (min-width: 640px) { .brand img { display: block; } }
+.header-inner { max-width: 1160px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 11px; min-width: 0; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; min-width: 0; }
-.brand-text .name {
-  font-family: var(--font-display); font-weight: 700; font-size: 1.05rem;
-  color: var(--signal-2); font-style: italic; white-space: nowrap;
-}
-.brand-text .tag { font-size: 0.66rem; color: var(--paper-dimmer); font-style: italic; display: none; }
+.brand-text .name { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; color: var(--sky-900); white-space: nowrap; letter-spacing: -0.01em; }
+.brand-text .tag { font-size: 0.66rem; color: var(--ink-dimmer); display: none; }
 @media (min-width: 640px) { .brand-text .tag { display: block; } }
 
-nav.desktop-nav { display: none; align-items: center; gap: 18px; }
+nav.desktop-nav { display: none; align-items: center; gap: 6px; }
 @media (min-width: 1024px) { nav.desktop-nav { display: flex; } }
-nav.desktop-nav a {
-  font-size: 0.84rem; color: var(--paper-dim); padding: 6px 1px;
-  border-bottom: 2px solid transparent; white-space: nowrap;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-nav.desktop-nav a:hover { color: var(--paper); }
-nav.desktop-nav a.active { color: var(--signal-2); border-color: var(--signal); }
-nav.desktop-nav a.login-link { color: var(--signal-2); }
+nav.desktop-nav a { font-size: 0.86rem; font-weight: 500; color: var(--ink-dim); padding: 9px 13px; border-radius: 999px; white-space: nowrap; transition: color 0.15s ease, background 0.15s ease; }
+nav.desktop-nav a:hover { color: var(--sky-900); background: var(--sky-100); }
+nav.desktop-nav a.current { color: var(--sky-900); background: var(--sky-100); font-weight: 700; }
+nav.desktop-nav a.login-link { color: var(--white); background: var(--sky-900); font-weight: 600; }
+nav.desktop-nav a.login-link:hover { background: var(--sky-800); color: var(--white); }
 
 .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.btn-lang {
-  background: transparent; border: 1px solid var(--line); color: var(--paper);
-  font-family: var(--font-mono); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em;
-  padding: 8px 12px; border-radius: 6px; cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-.btn-lang:hover { border-color: var(--signal); color: var(--signal-2); }
+.btn-lang { background: var(--surface); border: 1px solid var(--line); color: var(--sky-900); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.02em; padding: 8px 13px; border-radius: 999px; cursor: pointer; transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+.btn-lang:hover { border-color: var(--sky-500); box-shadow: 0 2px 10px -4px rgba(11,61,104,0.3); }
 
-.btn-menu {
-  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px;
-  width: 38px; height: 38px; background: transparent; border: 1px solid var(--line);
-  border-radius: 6px; color: var(--paper); cursor: pointer;
-}
+.btn-menu { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; width: 38px; height: 38px; background: var(--surface); border: 1px solid var(--line); border-radius: 11px; color: var(--sky-900); cursor: pointer; }
 @media (min-width: 1024px) { .btn-menu { display: none; } }
-.btn-menu span { width: 16px; height: 1.5px; background: var(--paper); display: block; }
+.btn-menu span { width: 16px; height: 1.6px; background: var(--sky-900); display: block; border-radius: 2px; }
 
-#mobileMenu {
-  max-height: 0; overflow: hidden; opacity: 0;
-  transition: max-height 300ms ease, opacity 250ms ease;
-  background: var(--ink-900); border-bottom: 1px solid var(--line-soft);
-}
+#mobileMenu { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 300ms ease, opacity 250ms ease; background: var(--surface-glass-strong); backdrop-filter: blur(16px); border-bottom: 1px solid var(--line-soft); }
 #mobileMenu.open { max-height: 640px; opacity: 1; }
 #mobileMenu .wrap { padding: 6px 24px 18px; display: flex; flex-direction: column; }
-#mobileMenu a { padding: 12px 4px; border-bottom: 1px solid var(--line-soft); color: var(--paper-dim); font-size: 0.92rem; }
+#mobileMenu a { padding: 12px 4px; border-bottom: 1px solid var(--line-soft); color: var(--ink-dim); font-size: 0.92rem; }
 #mobileMenu a:last-child { border-bottom: none; }
-#mobileMenu a.active { color: var(--signal-2); font-weight: 600; }
-#mobileMenu a.login-link { color: var(--signal-2); font-weight: 600; }
+#mobileMenu a.current { color: var(--sky-700); font-weight: 700; }
+#mobileMenu a.login-link { color: var(--sky-700); font-weight: 700; }
 
 /* ==========================================================
-   PAGE HERO (compact — utility page, not the home hero)
+   REVEAL EFFECT — Windows 11 "mica" pointer glow (see JS at
+   bottom: delegated pointermove listener drives --mx/--my)
    ========================================================== */
-.page-hero {
-  position: relative;
-  padding: 150px 0 20px;
-  overflow: hidden;
+.reveal { position: relative; isolation: isolate; overflow: hidden; }
+.reveal::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; opacity: 0; pointer-events: none;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(46, 143, 209, 0.16), rgba(46, 143, 209, 0.05) 45%, transparent 70%);
+  transition: opacity 0.25s ease;
 }
+.reveal:hover::before, .reveal.reveal-active::before { opacity: 1; }
+.reveal > * { position: relative; z-index: 1; }
+.recent-chip.reveal::before, .btn-secondary.reveal::before {
+  background: radial-gradient(90px circle at var(--mx, 50%) var(--my, 50%), rgba(46, 143, 209, 0.22), transparent 70%);
+}
+
+/* ==========================================================
+   PAGE HERO + SEARCH CARD
+   ========================================================== */
+.page-hero { position: relative; padding: 150px 0 20px; overflow: hidden; }
 .page-hero::before {
-  content: "";
-  position: absolute; inset: 0;
+  content: ""; position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 700px 380px at 85% -10%, rgba(255,138,61,0.10), transparent 60%),
-    radial-gradient(ellipse 600px 380px at 0% 0%, rgba(58,90,190,0.14), transparent 55%);
+    radial-gradient(ellipse 700px 380px at 85% -10%, rgba(46,143,209,0.12), transparent 60%),
+    radial-gradient(ellipse 600px 380px at 0% 0%, rgba(11,61,104,0.08), transparent 55%);
   pointer-events: none;
 }
-.page-hero .wrap { position: relative; z-index: 2; text-align: center; }
-.page-hero-title {
-  font-family: var(--font-display); font-weight: 700;
-  font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1.15;
-  letter-spacing: -0.01em; margin-bottom: 12px;
-}
-.page-hero-title .accent { color: var(--signal-2); }
-.page-hero-sub {
-  color: var(--paper-dim); font-size: 0.98rem; line-height: 1.65;
-  max-width: 560px; margin: 0 auto;
-}
+.page-hero .wrap { position: relative; z-index: 2; }
+.page-hero-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.9rem, 4.4vw, 2.9rem); line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 14px; color: var(--sky-950); }
+.page-hero-title .accent { color: var(--sky-600); }
+.page-hero-sub { color: var(--ink-dim); font-size: 1.02rem; line-height: 1.65; max-width: 560px; }
 
-/* ==========================================================
-   SHIPMENT FORM CARD — modeled on the .track-card pattern
-   ========================================================== */
-.form-card {
-  background: var(--ink-800); border: 1px solid var(--line); border-radius: 16px;
-  padding: 34px 30px; box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6);
-  max-width: 640px; margin: 34px auto 0;
+.track-card {
+  background: var(--surface-glass-strong);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--line); border-radius: var(--radius-xl);
+  padding: 32px 30px; box-shadow: var(--shadow-fluent-lg);
+  max-width: 640px;
 }
+#trackingForm { display: flex; gap: 10px; flex-wrap: wrap; }
+.track-field { flex: 1; min-width: 220px; position: relative; }
+.track-field .field-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sky-600); margin-bottom: 7px; display: block; }
+#trackingNo {
+  width: 100%; padding: 14px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--line); background: var(--sky-50); color: var(--ink);
+  font-family: 'JetBrains Mono', var(--font-body); font-size: 0.98rem; letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+#trackingNo::placeholder { color: var(--ink-dimmer); font-family: var(--font-body); text-transform: none; letter-spacing: normal; }
+#trackingNo:focus { border-color: var(--sky-500); background: var(--white); box-shadow: 0 0 0 4px rgba(46,143,209,0.14); }
+#trackingNo.invalid { border-color: var(--err); }
+.field-hint { font-size: 0.78rem; color: var(--ink-dimmer); margin-top: 8px; }
+.field-hint.error { color: var(--err); }
 
-.field-group { margin-bottom: 22px; }
-.field-group:last-of-type { margin-bottom: 0; }
-.field-label {
-  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--paper-dimmer); margin-bottom: 8px; display: block;
-}
-.field-input, .field-textarea {
-  width: 100%; padding: 13px 15px; border-radius: 9px;
-  border: 1px solid var(--line); background: var(--ink-900); color: var(--paper);
-  font-family: var(--font-body); font-size: 0.95rem;
-  transition: border-color 0.15s ease;
-}
-.field-input::placeholder, .field-textarea::placeholder { color: var(--paper-dimmer); }
-.field-input:focus, .field-textarea:focus { border-color: var(--signal); }
-.field-textarea { resize: vertical; min-height: 90px; }
-
-.btn-primary {
+.track-submit-row { width: 100%; display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.btn-primary, .btn-secondary {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 14px 26px; border-radius: 9px; font-weight: 600; font-size: 0.96rem;
-  cursor: pointer; border: none; margin-top: 28px;
-  background: linear-gradient(180deg, var(--signal-2), var(--signal)); color: var(--ink-950);
-  box-shadow: 0 10px 24px -8px rgba(255,138,61,0.5);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  padding: 14px 26px; border-radius: 999px; font-weight: 700; font-size: 0.94rem;
+  cursor: pointer; border: none; transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
 }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -8px rgba(255,138,61,0.6); }
+.btn-primary { background: linear-gradient(180deg, var(--sky-600), var(--sky-900)); color: var(--white); box-shadow: 0 14px 28px -10px rgba(11,61,104,0.45); flex: 1; min-width: 160px; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 18px 34px -10px rgba(11,61,104,0.5); }
 .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-secondary { background: var(--surface); border: 1px solid var(--line); color: var(--sky-900); }
+.btn-secondary:hover { border-color: var(--sky-500); transform: translateY(-2px); box-shadow: var(--shadow-fluent); }
+
+.recent-row { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.recent-label { font-size: 0.7rem; font-weight: 700; color: var(--ink-dimmer); letter-spacing: 0.06em; text-transform: uppercase; }
+.recent-chip {
+  font-family: 'JetBrains Mono', var(--font-body); font-size: 0.78rem; color: var(--sky-700);
+  background: var(--white); border: 1px solid var(--sky-200); border-radius: 999px;
+  padding: 6px 13px; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease;
+}
+.recent-chip:hover { border-color: var(--sky-500); background: var(--sky-100); }
 
 /* ==========================================================
-   RESULT / ERROR STATES
+   HOW IT WORKS
    ========================================================== */
-#message { max-width: 640px; margin: 24px auto 0; }
-.result-success {
-  background: var(--ink-800); border: 1px solid rgba(53,217,154,0.4); border-radius: 16px;
-  padding: 26px 28px; box-shadow: 0 30px 60px -30px rgba(0,0,0,0.6);
+.step-grid { display: grid; gap: 20px; grid-template-columns: 1fr; margin-top: 36px; }
+@media (min-width: 720px) { .step-grid { grid-template-columns: repeat(3, 1fr); } }
+.step-card {
+  position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 26px 24px 24px; box-shadow: 0 1px 2px rgba(11,61,104,0.04);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
-.result-success .rs-check {
-  display: inline-flex; align-items: center; gap: 8px;
-  color: var(--ok); font-weight: 700; font-size: 1rem; margin-bottom: 14px;
+.step-card:hover { transform: translateY(-4px); border-color: var(--sky-200); box-shadow: var(--shadow-fluent); }
+.step-card .step-num {
+  font-weight: 800; font-size: 0.78rem; color: var(--sky-700); letter-spacing: 0.06em; margin-bottom: 14px;
+  display: inline-block; padding: 5px 12px; background: var(--sky-100); border-radius: 999px;
 }
-.result-success .rs-check svg { width: 20px; height: 20px; }
-.result-success .rs-row { font-size: 0.92rem; color: var(--paper-dim); margin-bottom: 8px; }
-.result-success .rs-row b { color: var(--paper); font-family: var(--font-mono); }
-.result-success a.rs-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  color: var(--signal-2); font-weight: 600; margin-top: 6px;
-  border-bottom: 1px solid rgba(255,176,102,0.4);
-}
-.result-success a.rs-link:hover { border-color: var(--signal-2); }
-
-.result-error {
-  background: rgba(255,107,107,0.06); border: 1px solid rgba(255,107,107,0.35); border-radius: 14px;
-  padding: 16px 18px; color: var(--err); font-size: 0.9rem; font-weight: 500;
-}
+.step-card h4 { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 8px; color: var(--sky-950); }
+.step-card p { color: var(--ink-dim); font-size: 0.88rem; line-height: 1.6; }
 
 /* ==========================================================
-   FOOTER — shared with home.html / tracking.html
+   FOOTER
    ========================================================== */
-footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26px; background: var(--ink-900); margin-top: auto; }
+footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26px; background: var(--sky-950); color: var(--sky-100); margin-top: auto; }
+.footer-brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
 .footer-grid { display: grid; gap: 34px; grid-template-columns: 1fr; margin-bottom: 40px; }
 @media (min-width: 768px) { .footer-grid { grid-template-columns: repeat(3, 1fr); } }
-.footer-grid h4 { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 14px; color: var(--signal-2); }
-.footer-grid p { color: var(--paper-dim); font-size: 0.88rem; line-height: 1.6; }
+.footer-grid h4 { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; margin-bottom: 14px; color: var(--white); }
+.footer-grid p { color: var(--sky-200); font-size: 0.88rem; line-height: 1.6; }
 .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.footer-links a { color: var(--paper-dim); font-size: 0.88rem; }
-.footer-links a:hover { color: var(--signal-2); }
-.footer-bottom {
-  border-top: 1px solid var(--line-soft); padding-top: 22px; text-align: center;
-  font-family: var(--font-mono); font-size: 0.72rem; color: var(--paper-dimmer); letter-spacing: 0.03em;
-}
+.footer-links a { color: var(--sky-200); font-size: 0.88rem; }
+.footer-links a:hover { color: var(--white); }
+.footer-bottom { border-top: 1px solid rgba(255,255,255,0.12); padding-top: 22px; text-align: center; font-size: 0.74rem; color: var(--sky-400); letter-spacing: 0.02em; }
 
-/* scroll-to-top FAB */
 #scrollTopBtn {
   position: fixed; right: 20px; bottom: 20px; z-index: 400;
   width: 44px; height: 44px; border-radius: 50%;
-  background: var(--signal); color: var(--ink-950); border: none; cursor: pointer;
+  background: var(--surface-glass-strong); color: var(--sky-900); border: 1px solid var(--line);
+  backdrop-filter: blur(10px); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 12px 24px -8px rgba(255,138,61,0.55);
+  box-shadow: var(--shadow-fluent);
   opacity: 0; visibility: hidden; transform: translateY(10px);
-  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s, bottom 0.25s ease;
 }
 #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0); }
+#scrollTopBtn.chat-present { bottom: 90px; }
 #scrollTopBtn svg { width: 18px; height: 18px; }
 
 .hidden { display: none !important; }
+
+/* ==========================================================
+   CHAT WIDGET
+   ========================================================== */
+#chatFab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 1000;
+  width: 58px; height: 58px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: linear-gradient(160deg, var(--sky-500), var(--sky-900));
+  color: var(--white); display: flex; align-items: center; justify-content: center;
+  cursor: pointer; box-shadow: 0 16px 32px -10px rgba(11,61,104,0.55);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+#chatFab:hover { transform: translateY(-3px); box-shadow: 0 20px 38px -10px rgba(11,61,104,0.65); }
+#chatFab svg { width: 25px; height: 25px; transition: opacity 0.15s ease, transform 0.15s ease; }
+#chatFab .icon-close { position: absolute; opacity: 0; transform: rotate(-45deg) scale(0.7); }
+#chatFab.open .icon-chat { opacity: 0; transform: rotate(45deg) scale(0.7); }
+#chatFab.open .icon-close { opacity: 1; transform: rotate(0deg) scale(1); }
+
+#chatUnread {
+  position: absolute; top: -4px; right: -4px; min-width: 20px; height: 20px; padding: 0 5px;
+  border-radius: 999px; background: var(--err); color: #fff; font-size: 0.68rem; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; border: 2px solid var(--white);
+}
+#chatUnread.hidden { display: none !important; }
+
+#chatPanel {
+  position: fixed; right: 20px; bottom: 90px; z-index: 999;
+  width: min(370px, calc(100vw - 40px)); height: min(540px, calc(100vh - 130px));
+  background: var(--surface-glass-strong); backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--line); border-radius: var(--radius-xl); box-shadow: var(--shadow-fluent-lg);
+  display: flex; flex-direction: column; overflow: hidden;
+  transform-origin: bottom right; transform: scale(0.92) translateY(12px); opacity: 0; pointer-events: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+#chatPanel.open { transform: scale(1) translateY(0); opacity: 1; pointer-events: auto; }
+
+.chat-head { padding: 16px 18px; display: flex; align-items: center; gap: 11px; border-bottom: 1px solid var(--line-soft); background: linear-gradient(180deg, var(--white), var(--sky-50)); flex-shrink: 0; }
+.chat-avatar { width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(160deg, var(--sky-500), var(--sky-900)); color: var(--white); display: flex; align-items: center; justify-content: center; }
+.chat-avatar svg { width: 18px; height: 18px; }
+.chat-head .ch-titles { flex: 1; min-width: 0; }
+.chat-head .ch-name { font-family: var(--font-display); font-weight: 800; font-size: 0.93rem; color: var(--sky-950); }
+.chat-head .ch-status { font-size: 0.68rem; color: var(--ink-dimmer); letter-spacing: 0.01em; display: flex; align-items: center; gap: 5px; }
+.chat-head .ch-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); animation: pulse 2s ease-out infinite; }
+.chat-head .ch-close { width: 28px; height: 28px; border-radius: 9px; border: 1px solid var(--line); background: var(--white); color: var(--ink-dim); cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.chat-head .ch-close:hover { border-color: var(--sky-500); color: var(--sky-700); }
+.chat-head .ch-close svg { width: 14px; height: 14px; }
+
+.chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; background: var(--sky-50); }
+.chat-msg { max-width: 84%; display: flex; flex-direction: column; gap: 3px; }
+.chat-msg .bubble { padding: 11px 14px; border-radius: 16px; font-size: 0.86rem; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap; }
+.chat-msg .meta { font-size: 0.62rem; color: var(--ink-dimmer); padding: 0 3px; }
+.chat-msg.from-user { align-self: flex-end; }
+.chat-msg.from-user .bubble { background: linear-gradient(160deg, var(--sky-500), var(--sky-900)); color: var(--white); border-bottom-right-radius: 4px; box-shadow: 0 6px 16px -8px rgba(11,61,104,0.4); }
+.chat-msg.from-user .meta { text-align: right; }
+.chat-msg.from-bot, .chat-msg.from-admin { align-self: flex-start; }
+.chat-msg.from-bot .bubble { background: var(--white); border: 1px solid var(--line); color: var(--ink); border-bottom-left-radius: 4px; }
+.chat-msg.from-admin .bubble { background: var(--sky-100); border: 1px solid var(--sky-200); color: var(--sky-950); border-bottom-left-radius: 4px; }
+.chat-msg.from-admin .meta { color: var(--sky-700); }
+.chat-link { color: var(--sky-700); text-decoration: underline; font-weight: 600; word-break: break-all; }
+.chat-link:hover { color: var(--sky-900); }
+
+.chat-quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 4px; align-self: flex-start; max-width: 100%; }
+.chat-quick-btn { font-size: 0.78rem; font-weight: 600; color: var(--sky-700); background: var(--white); border: 1px solid var(--sky-200); border-radius: 999px; padding: 7px 13px; cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease; }
+.chat-quick-btn:hover { border-color: var(--sky-500); background: var(--sky-100); }
+
+.chat-typing { align-self: flex-start; display: flex; gap: 4px; padding: 11px 14px; background: var(--white); border: 1px solid var(--line); border-radius: 16px; border-bottom-left-radius: 4px; }
+.chat-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--sky-400); animation: typingDot 1.2s ease infinite; }
+.chat-typing span:nth-child(2) { animation-delay: 0.15s; }
+.chat-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typingDot { 0%, 60%, 100% { opacity: 0.3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(31,169,122,0.55); } 70% { box-shadow: 0 0 0 6px rgba(31,169,122,0); } 100% { box-shadow: 0 0 0 0 rgba(31,169,122,0); } }
+
+.chat-foot { border-top: 1px solid var(--line-soft); padding: 12px; display: flex; gap: 8px; align-items: flex-end; background: var(--white); flex-shrink: 0; }
+#chatInput { flex: 1; resize: none; max-height: 90px; min-height: 40px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--sky-50); color: var(--ink); font-family: var(--font-body); font-size: 0.86rem; line-height: 1.4; }
+#chatInput:focus { border-color: var(--sky-500); background: var(--white); }
+#chatInput::placeholder { color: var(--ink-dimmer); }
+#chatSendBtn { width: 40px; height: 40px; border-radius: 12px; border: none; cursor: pointer; flex-shrink: 0; background: linear-gradient(160deg, var(--sky-500), var(--sky-900)); color: var(--white); display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 18px -8px rgba(11,61,104,0.5); }
+#chatSendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+#chatSendBtn svg { width: 17px; height: 17px; }
+.chat-body::-webkit-scrollbar { width: 6px; }
+.chat-body::-webkit-scrollbar-thumb { background: var(--sky-200); border-radius: 6px; }
+
+@media (max-width: 480px) {
+  #chatPanel { right: 12px; bottom: 84px; width: calc(100vw - 24px); height: calc(100vh - 150px); }
+  #chatFab { right: 14px; bottom: 14px; }
+  #scrollTopBtn.chat-present { bottom: 84px; right: 14px; }
+}
+
+/* ==========================================================
+   CREATE SHIPMENT FORM — tracking-page visual language
+   ========================================================== */
+.shipment-card {
+  max-width: 760px;
+  margin: 32px auto 0;
+  background: var(--surface-glass-strong);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: 30px;
+  box-shadow: var(--shadow-fluent-lg);
+}
+.shipment-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.shipment-field { min-width: 0; }
+.shipment-field.full { grid-column: 1 / -1; }
+.shipment-field .field-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sky-600);
+  margin-bottom: 7px;
+  display: block;
+}
+.shipment-input,
+.shipment-textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--line);
+  background: var(--sky-50);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.94rem;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.shipment-input::placeholder,
+.shipment-textarea::placeholder { color: var(--ink-dimmer); }
+.shipment-input:focus,
+.shipment-textarea:focus {
+  outline: none;
+  border-color: var(--sky-500);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(46,143,209,.14);
+}
+.shipment-textarea { min-height: 105px; resize: vertical; }
+.shipment-submit-row {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.shipment-submit-row .btn-primary { width: 100%; }
+.result-wrap { max-width: 760px; margin: 20px auto 0; }
+.result-success {
+  background: var(--surface-glass-strong);
+  border: 1px solid rgba(31,169,122,.28);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-fluent);
+}
+.result-success .rs-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ok);
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.result-success .rs-check svg { width: 20px; height: 20px; flex-shrink: 0; }
+.result-success .rs-row {
+  color: var(--ink-dim);
+  font-size: .9rem;
+  margin: 7px 0;
+}
+.result-success .rs-row b {
+  color: var(--ink);
+  font-family: 'JetBrains Mono', monospace;
+}
+.result-success .rs-link {
+  display: inline-flex;
+  margin-top: 10px;
+  color: var(--sky-700);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.result-error {
+  background: rgba(229,72,77,.06);
+  border: 1px solid rgba(229,72,77,.25);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--err);
+  font-size: .88rem;
+  line-height: 1.5;
+}
+.form-note {
+  margin: 14px auto 0;
+  max-width: 760px;
+  color: var(--ink-dimmer);
+  font-size: .76rem;
+  text-align: center;
+}
+@media (max-width: 700px) {
+  .shipment-card { padding: 20px 16px; border-radius: 20px; }
+  .shipment-grid { grid-template-columns: 1fr; gap: 15px; }
+  .shipment-field.full { grid-column: auto; }
+  .shipment-submit-row { margin-top: 15px; }
+}
+@media (max-width: 480px) {
+  .page-hero { padding-top: 125px; }
+  .page-hero-sub { font-size: .94rem; }
+  .shipment-input, .shipment-textarea { font-size: .9rem; padding: 13px 14px; }
+}
+
 </style>
 </head>
 <body>
+
 
 <!-- ================= HEADER ================= -->
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
     <a href="home.html" class="brand">
-      <img src="images/images (2).jpeg" alt="AOL Logistics">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+          <rect width="64" height="64" rx="18" class="mark-bg"/>
+          <path d="M12 41 Q23 15 33 29 T52 20" class="mark-route" fill="none" stroke-width="4.2" stroke-linecap="round"/>
+          <circle cx="52" cy="20" r="4.4" class="mark-dot"/>
+          <circle cx="12" cy="41" r="3" class="mark-dot mark-dot-soft"/>
+        </svg>
+      </span>
       <div class="brand-text">
         <span class="name" data-key="brand">AOL LOGISTICS</span>
         <span class="tag" data-key="footer_tagline_short">delivery service at its finest</span>
@@ -315,8 +527,8 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     <nav class="desktop-nav">
       <a href="about.html" data-key="nav_about">회사 소개</a>
       <a href="home.html#services" data-key="nav_services">서비스</a>
-      <a href="tracking.html" data-key="nav_track">배송 추적</a>
-      <a href="form.html" class="active" data-key="nav_create">배송 생성</a>
+      <a href="tracking-form.html" data-key="nav_track">배송 추적</a>
+      <a href="form.html" class="current" data-key="nav_create">배송 생성</a>
       <a href="bookshop.html" data-key="nav_news">서점</a>
       <a href="home.html#contact" data-key="nav_contact">연락처</a>
       <a href="admin/login.html" class="login-link" data-key="nav_login">로그인</a>
@@ -335,8 +547,8 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
       <a href="home.html" data-key="nav_home">홈</a>
       <a href="about.html" data-key="nav_about">회사 소개</a>
       <a href="home.html#services" data-key="nav_services">서비스</a>
-      <a href="tracking.html" data-key="nav_track">배송 추적</a>
-      <a href="form.html" class="active" data-key="nav_create">배송 생성</a>
+      <a href="tracking-form.html" data-key="nav_track">배송 추적</a>
+      <a href="form.html" class="current" data-key="nav_create">배송 생성</a>
       <a href="bookshop.html" data-key="nav_news">서점</a>
       <a href="home.html#contact" data-key="nav_contact">연락처</a>
       <a href="admin/login.html" data-key="nav_login">로그인</a>
@@ -344,57 +556,69 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   </div>
 </header>
 
-<!-- ================= PAGE HERO ================= -->
+
+<!-- ================= PAGE HERO + SHIPMENT FORM ================= -->
 <section class="page-hero">
   <div class="wrap">
     <p class="eyebrow" data-key="form_eyebrow">NEW SHIPMENT</p>
-    <h1 class="page-hero-title" data-aos="fade-up" data-key="formTitle">수령인 정보</h1>
-    <p class="page-hero-sub" data-aos="fade-up" data-aos-delay="80" data-key="form_hero_sub">배송을 생성하려면 수령인 정보를 입력해 주세요. 제출 즉시 추적 번호가 발급됩니다.</p>
-  </div>
-</section>
+    <h1 class="page-hero-title" data-aos="fade-up" data-key="formTitle">Create your <span class="accent">shipment</span>.</h1>
+    <p class="page-hero-sub" data-aos="fade-up" data-aos-delay="80" data-key="form_hero_sub">
+      Enter the receiver's details below and we'll create your shipment and tracking number.
+    </p>
 
-<!-- ================= FORM ================= -->
-<main style="flex:1;">
-  <div class="wrap">
-    <form id="shipmentForm" class="form-card" data-aos="fade-up" data-aos-delay="140">
-      <div class="field-group">
-        <label class="field-label" for="receiver_name" data-key="nameLabel">이름</label>
-        <input type="text" id="receiver_name" class="field-input" autocomplete="name" required>
+    <form id="shipmentForm" class="shipment-card reveal" data-aos="fade-up" data-aos-delay="140">
+      <div class="shipment-grid">
+        <div class="shipment-field">
+          <label class="field-label" for="receiver_name" data-key="nameLabel">Receiver Name</label>
+          <input type="text" id="receiver_name" class="shipment-input" autocomplete="name" data-key="namePlaceholder" placeholder="Full name" required>
+        </div>
+
+        <div class="shipment-field">
+          <label class="field-label" for="receiver_email" data-key="emailLabel">Email Address</label>
+          <input type="email" id="receiver_email" class="shipment-input" autocomplete="email" data-key="emailPlaceholder" placeholder="name@example.com" required>
+        </div>
+
+        <div class="shipment-field full">
+          <label class="field-label" for="receiver_address" data-key="addressLabel">Delivery Address</label>
+          <textarea id="receiver_address" class="shipment-textarea" autocomplete="street-address" data-key="addressPlaceholder" placeholder="Enter the complete delivery address" required></textarea>
+        </div>
+
+        <div class="shipment-field">
+          <label class="field-label" for="receiver_country" data-key="countryLabel">Destination Country</label>
+          <input type="text" id="receiver_country" class="shipment-input" autocomplete="country-name" data-key="countryPlaceholder" placeholder="Country" required>
+        </div>
+
+        <div class="shipment-field">
+          <label class="field-label" for="receiver_phone" data-key="phoneLabel">Phone Number</label>
+          <input type="tel" id="receiver_phone" class="shipment-input" autocomplete="tel" data-key="phonePlaceholder" placeholder="+1 234 567 890" required>
+        </div>
       </div>
 
-      <div class="field-group">
-        <label class="field-label" for="receiver_email" data-key="emailLabel">이메일</label>
-        <input type="email" id="receiver_email" class="field-input" autocomplete="email" required>
+      <div class="shipment-submit-row">
+        <button type="submit" id="submitBtn" class="btn-primary" data-key="submitBtn">Create Shipment</button>
       </div>
-
-      <div class="field-group">
-        <label class="field-label" for="receiver_address" data-key="addressLabel">주소</label>
-        <textarea id="receiver_address" class="field-textarea" autocomplete="street-address" required></textarea>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label" for="receiver_country" data-key="countryLabel">국가</label>
-        <input type="text" id="receiver_country" class="field-input" autocomplete="country-name" required>
-      </div>
-
-      <div class="field-group">
-        <label class="field-label" for="receiver_phone" data-key="phoneLabel">전화번호</label>
-        <input type="tel" id="receiver_phone" class="field-input" autocomplete="tel" required>
-      </div>
-
-      <button type="submit" id="submitBtn" class="btn-primary" data-key="submitBtn">배송 제출</button>
     </form>
 
-    <div id="message"></div>
+    <p class="form-note" data-key="form_note">Your tracking number will be generated automatically after successful submission.</p>
+    <div id="message" class="result-wrap"></div>
   </div>
-</main>
+</section>
 
 <!-- ================= FOOTER ================= -->
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
       <div>
-        <h4 data-key="footer_brand">AOL LOGISTICS</h4>
+        <div class="footer-brand-row">
+          <span class="brand-mark brand-mark-sm" aria-hidden="true">
+            <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+              <rect width="64" height="64" rx="18" class="mark-bg"/>
+              <path d="M12 41 Q23 15 33 29 T52 20" class="mark-route" fill="none" stroke-width="4.2" stroke-linecap="round"/>
+              <circle cx="52" cy="20" r="4.4" class="mark-dot"/>
+            </svg>
+          </span>
+          <h4 data-key="footer_brand">AOL LOGISTICS</h4>
+        </div>
         <p data-key="footer_tagline">신뢰할 수 있는 해운 및 물류 솔루션으로 대륙을 연결합니다.</p>
       </div>
       <div>
@@ -403,7 +627,7 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
           <li><a href="home.html" data-key="nav_home">홈</a></li>
           <li><a href="about.html" data-key="nav_about">회사 소개</a></li>
           <li><a href="home.html#services" data-key="nav_services">서비스</a></li>
-          <li><a href="tracking.html" data-key="nav_track">배송 추적</a></li>
+          <li><a href="form.html" data-key="nav_create">배송 생성</a></li>
           <li><a href="admin/login.html" data-key="nav_login">로그인</a></li>
         </ul>
       </div>
@@ -423,14 +647,65 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
+<!-- ================= CHAT WIDGET ================= -->
+<button id="chatFab" class="reveal" aria-label="Open chat" aria-expanded="false">
+  <svg class="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-7.5 13.9L3 21l4.3-1.4A9 9 0 1 0 12 3Z"/><circle cx="8.5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="15.5" cy="12" r="1"/></svg>
+  <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  <span id="chatUnread" class="hidden">1</span>
+</button>
+
+<div id="chatPanel" role="dialog" aria-label="Chat">
+  <div class="chat-head">
+    <span class="chat-avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-7.5 13.9L3 21l4.3-1.4A9 9 0 1 0 12 3Z"/><circle cx="8.5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="15.5" cy="12" r="1"/></svg>
+    </span>
+    <div class="ch-titles">
+      <div class="ch-name" data-key="chat_title">AOL 고객 지원</div>
+      <div class="ch-status" id="chatStatusLabel" data-key="chat_status_bot"><span class="ch-dot"></span>AI 어시스턴트</div>
+    </div>
+    <button class="ch-close" id="chatCloseBtn" aria-label="Close chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-foot">
+    <textarea id="chatInput" rows="1" data-key="chat_input_placeholder" placeholder="메시지를 입력하세요..."></textarea>
+    <button id="chatSendBtn" class="reveal" aria-label="Send">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+    </button>
+  </div>
+</div>
+
 <!-- AOS -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>AOS.init({ duration: 700, once: true, disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches });</script>
+
+<!-- REVEAL EFFECT — delegated pointer listener -->
+<script>
+document.addEventListener('pointermove', (e) => {
+  const el = e.target.closest('.reveal');
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+  el.style.setProperty('--my', `${e.clientY - r.top}px`);
+});
+document.addEventListener('touchstart', (e) => {
+  const el = e.target.closest('.reveal');
+  if (!el) return;
+  const touch = e.touches[0];
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--mx', `${touch.clientX - r.left}px`);
+  el.style.setProperty('--my', `${touch.clientY - r.top}px`);
+  el.classList.add('reveal-active');
+  setTimeout(() => el.classList.remove('reveal-active'), 600);
+}, { passive: true });
+</script>
 
 <!-- HEADER SCROLL STATE + SCROLL-TO-TOP -->
 <script>
   const siteHeader = document.getElementById("siteHeader");
   const scrollTopBtn = document.getElementById("scrollTopBtn");
+  scrollTopBtn.classList.add('chat-present');
   window.addEventListener("scroll", () => {
     const y = window.scrollY;
     siteHeader.classList.toggle("scrolled", y > 30);
@@ -461,97 +736,117 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
   }
 </script>
 
-<!-- LANGUAGE TOGGLE (synced with the rest of the site via localStorage 'site_lang') -->
+
+
+<!-- ================= LANGUAGE ================= -->
 <script>
   const langToggle = document.getElementById("langToggle");
 
   const translations = {
     en: {
+      page_title: "Create Shipment - AOL LOGISTICS",
       brand: "AOL LOGISTICS",
       footer_tagline_short: "delivery service at its finest",
-      nav_home: "Home", nav_about: "About Us", nav_services: "Services", nav_track: "Track Shipment",
-      nav_create: "Create Shipment", nav_news: "Book shop", nav_contact: "Contact", nav_login: "Login",
+      nav_home: "Home", nav_about: "About Us", nav_services: "Services",
+      nav_track: "Track Shipment", nav_create: "Create Shipment", nav_news: "Book shop",
+      nav_contact: "Contact", nav_login: "Login",
       form_eyebrow: "NEW SHIPMENT",
-      formTitle: "Receiver Information",
-      form_hero_sub: "Fill in the receiver's details to create a shipment. A tracking number is issued the moment you submit.",
-      nameLabel: "Name",
-      emailLabel: "Email",
-      addressLabel: "Address",
-      countryLabel: "Country",
-      phoneLabel: "Phone Number",
-      submitBtn: "Submit Shipment",
-      submitting: "Submitting...",
+      formTitle: 'Create your <span class="accent">shipment</span>.',
+      form_hero_sub: "Enter the receiver's details below and we'll create your shipment and tracking number.",
+      nameLabel: "Receiver Name", namePlaceholder: "Full name",
+      emailLabel: "Email Address", emailPlaceholder: "name@example.com",
+      addressLabel: "Delivery Address", addressPlaceholder: "Enter the complete delivery address",
+      countryLabel: "Destination Country", countryPlaceholder: "Country",
+      phoneLabel: "Phone Number", phonePlaceholder: "+1 234 567 890",
+      submitBtn: "Create Shipment", submitting: "Creating Shipment...",
+      form_note: "Your tracking number will be generated automatically after successful submission.",
       footer_brand: "AOL LOGISTICS",
       footer_tagline: "Connecting continents with reliable shipping and logistics solutions.",
-      footer_links_heading: "Quick Links",
-      footer_contact_heading: "Contact",
-      footer_email: "Email: logisticsaol6@gmail.com",
-      footer_phone: "Phone: +1 800 173 5507",
+      footer_links_heading: "Quick Links", footer_contact_heading: "Contact",
+      footer_email: "Email: logisticsaol6@gmail.com", footer_phone: "Phone: +1 800 173 5507",
       copyright_text: "© 2025 AOL LOGISTICS. All rights reserved.",
       success_title: "Shipment successfully created!",
-      tracking_no_label: "Tracking No",
-      track_link_text: "Track your shipment here",
+      tracking_no_label: "Tracking No", track_link_text: "Track your shipment here",
       failed_prefix: "Failed:",
-      tracking_insert_failed: "Couldn't save the initial tracking update:"
+      tracking_insert_failed: "Couldn't save the initial tracking update:",
+      chat_title: "AOL Support", chat_status_bot: "AI Assistant",
+      chat_status_admin: "Agent connected", chat_input_placeholder: "Type a message...",
+      chat_send_error: "Couldn't send that. Please try again."
     },
     ko: {
+      page_title: "배송 생성 - AOL LOGISTICS",
       brand: "AOL LOGISTICS",
       footer_tagline_short: "최상의 배송 서비스",
-      nav_home: "홈", nav_about: "회사 소개", nav_services: "서비스", nav_track: "배송 추적",
-      nav_create: "배송 생성", nav_news: "서점", nav_contact: "연락처", nav_login: "로그인",
+      nav_home: "홈", nav_about: "회사 소개", nav_services: "서비스",
+      nav_track: "배송 추적", nav_create: "배송 생성", nav_news: "서점",
+      nav_contact: "연락처", nav_login: "로그인",
       form_eyebrow: "새 배송",
-      formTitle: "수령인 정보",
-      form_hero_sub: "배송을 생성하려면 수령인 정보를 입력해 주세요. 제출 즉시 추적 번호가 발급됩니다.",
-      nameLabel: "이름",
-      emailLabel: "이메일",
-      addressLabel: "주소",
-      countryLabel: "국가",
-      phoneLabel: "전화번호",
-      submitBtn: "배송 제출",
-      submitting: "제출 중...",
+      formTitle: '<span class="accent">배송</span>을 생성하세요.',
+      form_hero_sub: "수령인 정보를 입력하면 배송과 추적 번호가 자동으로 생성됩니다.",
+      nameLabel: "수령인 이름", namePlaceholder: "이름을 입력하세요",
+      emailLabel: "이메일 주소", emailPlaceholder: "name@example.com",
+      addressLabel: "배송 주소", addressPlaceholder: "전체 배송 주소를 입력하세요",
+      countryLabel: "도착 국가", countryPlaceholder: "국가",
+      phoneLabel: "전화번호", phonePlaceholder: "+82 10 1234 5678",
+      submitBtn: "배송 생성", submitting: "배송 생성 중...",
+      form_note: "제출이 완료되면 추적 번호가 자동으로 발급됩니다.",
       footer_brand: "AOL LOGISTICS",
       footer_tagline: "신뢰할 수 있는 해운 및 물류 솔루션으로 대륙을 연결합니다.",
-      footer_links_heading: "빠른 링크",
-      footer_contact_heading: "연락처",
-      footer_email: "이메일: logisticsaol6@gmail.com",
-      footer_phone: "전화: +1 800 173 5507",
+      footer_links_heading: "빠른 링크", footer_contact_heading: "연락처",
+      footer_email: "이메일: logisticsaol6@gmail.com", footer_phone: "전화: +1 800 173 5507",
       copyright_text: "© 2025 AOL LOGISTICS. 모든 권리 보유.",
       success_title: "배송이 성공적으로 생성되었습니다!",
-      tracking_no_label: "추적 번호",
-      track_link_text: "여기에서 배송을 추적하세요",
-      failed_prefix: "실패:",
-      tracking_insert_failed: "초기 추적 업데이트 저장 실패:"
+      tracking_no_label: "추적 번호", track_link_text: "여기에서 배송을 추적하세요",
+      failed_prefix: "실패:", tracking_insert_failed: "초기 추적 업데이트 저장 실패:",
+      chat_title: "AOL 고객 지원", chat_status_bot: "AI 어시스턴트",
+      chat_status_admin: "상담원 연결됨", chat_input_placeholder: "메시지를 입력하세요...",
+      chat_send_error: "전송하지 못했습니다. 다시 시도해 주세요."
     }
   };
 
-  let currentLang = localStorage.getItem('site_lang') || 'ko';
-
-  function t(key) { return (translations[currentLang] && translations[currentLang][key]) || key; }
+  let currentLang = localStorage.getItem("site_lang") || "ko";
 
   function setLanguage(lang) {
-    document.querySelectorAll('[data-key]').forEach(el => {
-      const key = el.getAttribute('data-key');
-      const text = (translations[lang] && translations[lang][key]) ? translations[lang][key] : null;
+    const dict = translations[lang] || translations.ko;
+
+    document.querySelectorAll("[data-key]").forEach(el => {
+      const key = el.getAttribute("data-key");
+      const text = dict[key];
       if (!text) return;
-      el.textContent = text;
+
+      if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
+        el.placeholder = text;
+      } else if (key === "formTitle") {
+        el.innerHTML = text;
+      } else {
+        el.textContent = text;
+      }
     });
 
-    langToggle.textContent = (lang === 'ko') ? 'EN' : '한국어';
-    document.title = (lang === 'ko') ? '배송 생성 - AOL LOGISTICS' : 'Create Shipment - AOL LOGISTICS';
-    document.documentElement.lang = (lang === 'ko') ? 'ko' : 'en';
-    localStorage.setItem('site_lang', lang);
+    langToggle.textContent = lang === "ko" ? "EN" : "한국어";
+    document.title = dict.page_title;
+    document.documentElement.lang = lang;
+    localStorage.setItem("site_lang", lang);
     currentLang = lang;
+
+    if (window.__renderChatStatus) window.__renderChatStatus();
   }
 
-  document.addEventListener('DOMContentLoaded', () => setLanguage(currentLang));
-  langToggle.addEventListener('click', () => setLanguage(currentLang === 'ko' ? 'en' : 'ko'));
+  window.__getSiteLang = () => currentLang;
+  window.__T = () => translations[currentLang] || translations.ko;
 
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'site_lang' && e.newValue && e.newValue !== currentLang) setLanguage(e.newValue);
+  document.addEventListener("DOMContentLoaded", () => setLanguage(currentLang));
+  langToggle.addEventListener("click", () => setLanguage(currentLang === "ko" ? "en" : "ko"));
+
+  window.addEventListener("storage", e => {
+    if (e.key === "site_lang" && e.newValue && e.newValue !== currentLang) {
+      setLanguage(e.newValue);
+    }
   });
 </script>
 
-<!-- ================= SHIPMENT SUBMISSION LOGIC (unchanged from the working version) ================= -->
+
+<!-- ================= SHIPMENT SUBMISSION ================= -->
 <script type="module">
   import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
@@ -560,119 +855,420 @@ footer.site-footer { border-top: 1px solid var(--line-soft); padding: 60px 0 26p
     "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB"
   );
 
-  function lang() { return localStorage.getItem('site_lang') || 'ko'; }
-  function t(key) {
-    const dict = {
-      en: {
-        submitting: "Submitting...", submitBtn: "Submit Shipment",
-        success_title: "Shipment successfully created!", tracking_no_label: "Tracking No",
-        track_link_text: "Track your shipment here", failed_prefix: "Failed:",
-        tracking_insert_failed: "Couldn't save the initial tracking update:"
-      },
-      ko: {
-        submitting: "제출 중...", submitBtn: "배송 제출",
-        success_title: "배송이 성공적으로 생성되었습니다!", tracking_no_label: "추적 번호",
-        track_link_text: "여기에서 배송을 추적하세요", failed_prefix: "실패:",
-        tracking_insert_failed: "초기 추적 업데이트 저장 실패:"
-      }
-    };
-    return (dict[lang()] && dict[lang()][key]) || key;
+  const form = document.getElementById("shipmentForm");
+  const btn = document.getElementById("submitBtn");
+  const messageDiv = document.getElementById("message");
+
+  const lang = () => window.__getSiteLang ? window.__getSiteLang() : (localStorage.getItem("site_lang") || "ko");
+  const T = key => (window.__T ? window.__T()[key] : key) || key;
+
+  function generateTrackingNo() {
+    const stamp = Date.now().toString(36).toUpperCase().slice(-5);
+    const random = Math.random().toString(36).slice(2, 7).toUpperCase();
+    return `AOL-${stamp}${random}`;
   }
 
-  // Auto generators
-  function generateTrackingNo() {
-    return "AOL-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-  }
   function generateAsaluNo() {
-    return "ASALU-" + Math.floor(Math.random() * 1000000);
+    return "ASALU-" + Math.floor(100000 + Math.random() * 900000);
   }
+
   function generateDeliveryCode() {
-    return "DEL-" + Math.random().toString(36).substr(2, 6).toUpperCase();
+    return "DEL-" + Math.random().toString(36).slice(2, 8).toUpperCase();
   }
+
   function generateItemNo() {
-    return "ITEM-" + Math.floor(Math.random() * 1000000);
+    return "ITEM-" + Math.floor(100000 + Math.random() * 900000);
+  }
+
+  function showError(message) {
+    messageDiv.innerHTML = `<div class="result-error">❌ ${message}</div>`;
+    messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   async function submitForm(e) {
     e.preventDefault();
-    const btn = document.getElementById("submitBtn");
-    const messageDiv = document.getElementById("message");
+
+    if (!form.reportValidity()) return;
+
     btn.disabled = true;
-    btn.textContent = t("submitting");
+    btn.textContent = T("submitting");
+    messageDiv.innerHTML = "";
 
     const trackingNo = generateTrackingNo();
-    const trackingLink = `tracking.html?tracking_no=${trackingNo}`;
-    const asaluNo = generateAsaluNo();
-    const deliveryCode = generateDeliveryCode();
-    const itemNo = generateItemNo();
+    const trackingLink = `tracking.html?tracking_no=${encodeURIComponent(trackingNo)}`;
 
     const shipment = {
       tracking_no: trackingNo,
       tracking_link: trackingLink,
-      receiver_name: document.getElementById("receiver_name").value,
-      receiver_email: document.getElementById("receiver_email").value,
-      receiver_address: document.getElementById("receiver_address").value,
-      receiver_country: document.getElementById("receiver_country").value,
-      receiver_phone: document.getElementById("receiver_phone").value,
-      asalu_no: asaluNo,
-      delivery_code: deliveryCode,
-      item_no: itemNo,
+      receiver_name: document.getElementById("receiver_name").value.trim(),
+      receiver_email: document.getElementById("receiver_email").value.trim(),
+      receiver_address: document.getElementById("receiver_address").value.trim(),
+      receiver_country: document.getElementById("receiver_country").value.trim(),
+      receiver_phone: document.getElementById("receiver_phone").value.trim(),
+      asalu_no: generateAsaluNo(),
+      delivery_code: generateDeliveryCode(),
+      item_no: generateItemNo(),
       status: "주문 접수"
     };
 
-    // Insert shipment and capture the new ID
-    const { data, error } = await supabase
-      .from("user_info")
-      .insert([shipment])
-      .select();
+    try {
+      const { data, error } = await supabase
+        .from("user_info")
+        .insert([shipment])
+        .select()
+        .single();
 
-    if (error) {
-      messageDiv.innerHTML = `<div class="result-error">❌ ${t("failed_prefix")} ${error.message}</div>`;
-      btn.disabled = false;
-      btn.textContent = t("submitBtn");
-      return;
-    }
+      if (error) throw error;
 
-    const shipmentId = data?.[0]?.id || null;
+      const shipmentId = data?.id || null;
 
-    // Insert initial tracking update
-    const trackingUpdate = {
-      shipment_id: shipmentId,
-      tracking_no: trackingNo,
-      status: "대기 중",
-      progress: "주문 접수",
-      location: "우크라이나",
-      note: "배송 생성됨"
-    };
+      if (!shipmentId) {
+        throw new Error("Shipment was created but its ID was not returned.");
+      }
 
-    const { error: trackingError } = await supabase
-      .from("tracking_updates")
-      .insert([trackingUpdate]);
+      const { error: trackingError } = await supabase
+        .from("tracking_updates")
+        .insert([{
+          shipment_id: shipmentId,
+          tracking_no: trackingNo,
+          status: "대기 중",
+          progress: "주문 접수",
+          location: "우크라이나",
+          note: "배송 생성됨"
+        }]);
 
-    let trackingErrorHtml = "";
-    if (trackingError) {
-      console.error("tracking insert error", trackingError);
-      trackingErrorHtml = `<div class="result-error" style="margin-top:12px;">❌ ${t("tracking_insert_failed")} ${trackingError.message}</div>`;
-    }
+      let trackingWarning = "";
+      if (trackingError) {
+        console.error("tracking insert error:", trackingError);
+        trackingWarning = `
+          <div class="result-error" style="margin-top:12px;">
+            ⚠️ ${T("tracking_insert_failed")} ${trackingError.message}
+          </div>`;
+      }
 
-    // Success message
-    document.getElementById("shipmentForm").classList.add("hidden");
-    messageDiv.innerHTML = `
-      <div class="result-success" data-aos="fade-up">
-        <div class="rs-check">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
-          ${t("success_title")}
+      form.classList.add("hidden");
+      messageDiv.innerHTML = `
+        <div class="result-success" data-aos="fade-up">
+          <div class="rs-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+            ${T("success_title")}
+          </div>
+          <div class="rs-row">${T("tracking_no_label")}: <b>${trackingNo}</b></div>
+          <a class="rs-link" href="${trackingLink}">${T("track_link_text")} →</a>
         </div>
-        <div class="rs-row">${t("tracking_no_label")}: <b>${trackingNo}</b></div>
-        <a class="rs-link" href="${trackingLink}">${t("track_link_text")} →</a>
-      </div>
-      ${trackingErrorHtml}`;
+        ${trackingWarning}
+      `;
 
-    btn.disabled = false;
-    btn.textContent = t("submitBtn");
+      if (window.AOS) AOS.refresh();
+      messageDiv.scrollIntoView({ behavior: "smooth", block: "center" });
+    } catch (error) {
+      console.error("shipment submission error:", error);
+      showError(`${T("failed_prefix")} ${error.message || "Unable to create shipment."}`);
+      btn.disabled = false;
+      btn.textContent = T("submitBtn");
+    }
   }
 
-  document.getElementById("shipmentForm").addEventListener("submit", submitForm);
+  form.addEventListener("submit", submitForm);
+</script>
+
+<!-- ================= CHAT WIDGET LOGIC — same smart-reply engine as
+     home.html / about.html, fully self-contained ================= -->
+<script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+  const supabase = createClient(
+    "https://rtgvylkbndrmwntaqkfx.supabase.co",
+    "sb_publishable_SFI-gjeDtTrOGpLp1_BTtg_hXy6wPSB"
+  );
+
+  function lang() { return window.__getSiteLang ? window.__getSiteLang() : (localStorage.getItem('site_lang') || 'ko'); }
+
+  const chatCopy = {
+    ko: {
+      statusBot: "AI 어시스턴트", statusAdmin: "상담원 연결됨", placeholder: "메시지를 입력하세요...",
+      greeting: "안녕하세요, 저는 아리아입니다 — AOL 물류 가상 상담원이에요 🚚\n\n배송 추적, 견적, 서비스, 통관, 보험, 상담원 연결 등 무엇이든 편하게 물어보세요. 무엇을 도와드릴까요?",
+      sendError: "전송하지 못했습니다. 다시 시도해 주세요.", you: "나", bot: "아리아", admin: "상담원"
+    },
+    en: {
+      statusBot: "AI Assistant", statusAdmin: "Agent connected", placeholder: "Type a message...",
+      greeting: "Hi, I'm Aria — the AOL virtual assistant 🚚\n\nAsk me about tracking, quotes, services, customs, insurance, or how to reach a human. What can I help with?",
+      sendError: "Couldn't send that. Please try again.", you: "You", bot: "Aria", admin: "Agent"
+    }
+  };
+  function cc() { return chatCopy[lang()] || chatCopy.ko; }
+
+  const fab = document.getElementById('chatFab');
+  const panel = document.getElementById('chatPanel');
+  const closeBtn = document.getElementById('chatCloseBtn');
+  const body = document.getElementById('chatBody');
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('chatSendBtn');
+  const unreadBadge = document.getElementById('chatUnread');
+  const statusLabel = document.getElementById('chatStatusLabel');
+
+  let sessionId = localStorage.getItem('aol_chat_session_id') || null;
+  let sessionStatus = 'bot';
+  let channel = null;
+  let isOpen = false;
+  let unread = 0;
+  let renderedIds = new Set();
+
+  window.__renderChatStatus = () => {
+    statusLabel.innerHTML = `<span class="ch-dot"></span>${sessionStatus === 'admin' ? cc().statusAdmin : cc().statusBot}`;
+    input.placeholder = cc().placeholder;
+  };
+
+  function scrollToBottom() { body.scrollTop = body.scrollHeight; }
+  function escapeHtml(str) { return str.replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
+  function linkify(text) {
+    const escaped = escapeHtml(text);
+    return escaped.replace(/(https?:\/\/[^\s]+|[a-zA-Z0-9_-]+\.html\?[^\s]+)/g, url =>
+      `<a href="${url}" class="chat-link" target="_self" rel="noopener">${url}</a>`);
+  }
+
+  function addBubble(sender, content, atStart = false) {
+    const c = cc();
+    const wrap = document.createElement('div');
+    wrap.className = `chat-msg from-${sender}`;
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    if (sender === 'user') bubble.textContent = content; else bubble.innerHTML = linkify(content);
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.textContent = sender === 'user' ? c.you : (sender === 'admin' ? c.admin : c.bot);
+    wrap.appendChild(bubble); wrap.appendChild(meta);
+    if (atStart) body.insertBefore(wrap, body.firstChild); else body.appendChild(wrap);
+  }
+
+  function addQuickReplies(options) {
+    const row = document.createElement('div');
+    row.className = 'chat-quick-replies';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'chat-quick-btn reveal';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => { row.remove(); input.value = opt; sendMessage(); });
+      row.appendChild(btn);
+    });
+    body.appendChild(row);
+    scrollToBottom();
+  }
+
+  function showTyping() {
+    hideTyping();
+    const el = document.createElement('div');
+    el.className = 'chat-typing'; el.id = 'chatTypingIndicator';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(el); scrollToBottom();
+  }
+  function hideTyping() { document.getElementById('chatTypingIndicator')?.remove(); }
+
+  function extractTrackingNumber(rawText) {
+    const trimmed = rawText.trim();
+    if (!trimmed) return null;
+    const labeled = trimmed.match(/(?:tracking\s*(?:number|no\.?|#)?|운송장\s*번호|송장\s*번호|awb\s*#?)\s*[:#-]?\s*([A-Za-z0-9-]{5,30})/i);
+    if (labeled && /\d/.test(labeled[1])) return labeled[1].toUpperCase();
+    const tokens = trimmed.split(/\s+/).filter(Boolean);
+    if (tokens.length <= 3) {
+      for (const raw of tokens) {
+        const tok = raw.replace(/^[.,;:!?()]+|[.,;:!?()]+$/g, '');
+        const isMixed = /^[A-Za-z0-9-]{6,30}$/.test(tok) && /\d/.test(tok) && /[A-Za-z]/.test(tok);
+        const isNumeric = /^[0-9]{8,20}$/.test(tok);
+        if (isMixed || isNumeric) return tok.toUpperCase();
+      }
+    }
+    return null;
+  }
+
+  function generateBotReply(rawText, langCode) {
+    const isKo = langCode === 'ko';
+    const q = rawText.toLowerCase().trim();
+    const has = words => words.some(w => q.includes(w));
+
+    const trackingNo = extractTrackingNumber(rawText);
+    if (trackingNo) {
+      const url = `tracking.html?tracking_no=${encodeURIComponent(trackingNo)}`;
+      return isKo
+        ? `운송장 번호 ${trackingNo} 확인했습니다 📦\n\n아래 링크를 눌러 실시간 배송 상태를 바로 확인하세요:\n${url}`
+        : `Got your tracking number ${trackingNo} 📦\n\nTap the link below to see its real-time status right away:\n${url}`;
+    }
+    if (has(['추적', '어디', '배송 상태', '배송상태', 'track', 'where is my', 'shipment status'])) {
+      return isKo
+        ? '배송 추적은 간단해요 📦\n\n운송장 번호를 이 채팅창에 그대로 붙여넣으시면 추적 페이지 링크를 바로 드릴게요. 또는 위 검색창에 입력해 주세요.'
+        : 'Tracking is easy 📦\n\nJust paste your tracking number right here in the chat and I\'ll send you a direct link to check its status. Or use the search box above.';
+    }
+    if (has(['견적', '가격', '요금', '비용', 'quote', 'price', 'cost', 'how much', 'rate'])) {
+      return isKo
+        ? '견적 문의 감사합니다 💰\n\n컨테이너 운송, RoRo(차량/중장비), 특수 화물 중 어떤 서비스가 필요하신가요? 출발지, 도착지, 화물 정보를 알려주시면 정확한 견적을 도와드립니다.'
+        : 'Happy to help with a quote 💰\n\nAre you looking for Container Shipping, RoRo, or Special Cargo? Share your origin, destination, and cargo details and an agent can put together an accurate quote.';
+    }
+    if (has(['연락처', '전화', '이메일', 'contact', 'phone', 'email', '상담원', 'agent', 'human'])) {
+      return isKo
+        ? '언제든 연락 주세요 📞\n\n전화: +1 800 173 5507\n이메일: logisticsaol6@gmail.com\n\n이 채팅창에 계속 메시지를 남겨주시면 상담원이 확인 후 직접 답변드립니다.'
+        : "Here's how to reach us 📞\n\nPhone: +1 800 173 5507\nEmail: logisticsaol6@gmail.com\n\nKeep chatting here and an agent can jump in anytime.";
+    }
+    if (has(['안녕', 'hello', 'hey', '반가워']) || q === 'hi') {
+      return isKo ? '안녕하세요! 배송 추적 📦, 견적 요청 💰 중 무엇을 도와드릴까요?' : 'Hello! Want to know more about tracking 📦 or a quote 💰?';
+    }
+    if (has(['감사', '고마워', 'thank'])) {
+      return isKo ? '천만에요! 더 필요한 게 있으면 언제든 말씀해 주세요 😊' : "You're welcome! Let me know if there's anything else you need 😊";
+    }
+    return isKo
+      ? '문의 감사합니다! 다음 중 궁금하신 내용이 있으실까요?\n\n• 📦 배송 추적 (운송장 번호를 붙여넣어 보세요)\n• 💰 견적 요청\n• 📞 연락처 / 상담원 연결'
+      : 'Thanks for reaching out! I can help with:\n\n• 📦 Tracking (paste your tracking number)\n• 💰 Quotes\n• 📞 Contact / a human agent';
+  }
+
+  async function ensureSession() {
+    if (sessionId) return sessionId;
+    const { data, error } = await supabase.from('chat_sessions').insert([{ status: 'bot' }]).select().single();
+    if (error) { console.error('session error', error); return null; }
+    sessionId = data.id;
+    sessionStatus = data.status;
+    localStorage.setItem('aol_chat_session_id', sessionId);
+    return sessionId;
+  }
+
+  async function loadHistory() {
+    if (!sessionId) return;
+    const { data: sessionRow } = await supabase.from('chat_sessions').select('*').eq('id', sessionId).maybeSingle();
+    if (sessionRow) sessionStatus = sessionRow.status;
+    window.__renderChatStatus();
+
+    const { data: msgs, error } = await supabase.from('chat_messages').select('*').eq('session_id', sessionId).order('created_at', { ascending: true });
+    if (error) { console.error('history error', error); return; }
+    body.innerHTML = '';
+    renderedIds = new Set();
+    (msgs || []).forEach(m => { addBubble(m.sender, m.content); renderedIds.add(m.id); });
+    scrollToBottom();
+  }
+
+  function subscribeRealtime() {
+    if (channel || !sessionId) return;
+    channel = supabase
+      .channel(`chat-${sessionId}`)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `session_id=eq.${sessionId}` }, (payload) => {
+        const m = payload.new;
+        if (renderedIds.has(m.id)) return;
+        renderedIds.add(m.id);
+        hideTyping();
+        addBubble(m.sender, m.content);
+        scrollToBottom();
+        if (m.sender !== 'user' && !isOpen) {
+          unread += 1;
+          unreadBadge.textContent = String(unread);
+          unreadBadge.classList.remove('hidden');
+        }
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_sessions', filter: `id=eq.${sessionId}` }, (payload) => {
+        sessionStatus = payload.new.status;
+        window.__renderChatStatus();
+      })
+      .subscribe();
+  }
+
+  async function openPanel() {
+    isOpen = true;
+    fab.classList.add('open');
+    fab.setAttribute('aria-expanded', 'true');
+    panel.classList.add('open');
+    unread = 0;
+    unreadBadge.classList.add('hidden');
+
+    await ensureSession();
+    if (!sessionId) return;
+
+    await loadHistory();
+    if (body.children.length === 0) {
+      addBubble('bot', cc().greeting);
+      addQuickReplies(lang() === 'ko' ? ['배송 추적', '견적 요청', '상담원 연결'] : ['Track a shipment', 'Get a quote', 'Talk to an agent']);
+    }
+    subscribeRealtime();
+    scrollToBottom();
+    input.focus();
+  }
+
+  function closePanel() {
+    isOpen = false;
+    fab.classList.remove('open');
+    fab.setAttribute('aria-expanded', 'false');
+    panel.classList.remove('open');
+  }
+
+  fab.addEventListener('click', () => { isOpen ? closePanel() : openPanel(); });
+  closeBtn.addEventListener('click', closePanel);
+
+  input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 90) + 'px';
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+  sendBtn.addEventListener('click', sendMessage);
+
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = ''; input.style.height = 'auto';
+    sendBtn.disabled = true;
+
+    const qr = document.querySelector('.chat-quick-replies');
+    if (qr) qr.remove();
+
+    await ensureSession();
+    if (!sessionId) { sendBtn.disabled = false; return; }
+    subscribeRealtime();
+
+    addBubble('user', text);
+    scrollToBottom();
+
+    try {
+      const { data: inserted, error } = await supabase
+        .from('chat_messages')
+        .insert([{ session_id: sessionId, sender: 'user', content: text }])
+        .select()
+        .single();
+      if (error) throw error;
+      if (inserted) renderedIds.add(inserted.id);
+
+      if (sessionStatus !== 'admin') {
+        showTyping();
+        const replyText = generateBotReply(text, lang());
+        setTimeout(async () => {
+          try {
+            const { data: botMsg, error: botErr } = await supabase
+              .from('chat_messages')
+              .insert([{ session_id: sessionId, sender: 'bot', content: replyText }])
+              .select()
+              .single();
+            if (botErr) throw botErr;
+            hideTyping();
+            if (botMsg && !renderedIds.has(botMsg.id)) {
+              renderedIds.add(botMsg.id);
+              addBubble('bot', botMsg.content);
+              scrollToBottom();
+            }
+          } catch (botInsertErr) {
+            console.error('bot reply insert failed', botInsertErr);
+            hideTyping();
+            addBubble('bot', cc().sendError);
+            scrollToBottom();
+          }
+        }, 500 + Math.random() * 500);
+      }
+    } catch (err) {
+      console.error('send error', err);
+      addBubble('bot', cc().sendError);
+    } finally {
+      sendBtn.disabled = false;
+    }
+  }
+
+  window.__renderChatStatus();
 </script>
 
 </body>
