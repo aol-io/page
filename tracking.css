@@ -1,0 +1,381 @@
+/* ==========================================================
+   AOL LOGISTICS — tracking.css
+   Page-only styles for tracking.html. Shares every design
+   token (--sky-*, --radius-*, --shadow-fluent, fonts) with
+   styles.css, which must be loaded first.
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   PAGE HEADER
+   ---------------------------------------------------------- */
+.tracking-main { padding-top: 118px; padding-bottom: 90px; min-height: 70vh; }
+
+.page-eyebrow {
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sky-600);
+  text-align: center;
+  margin-bottom: 8px;
+}
+.page-title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.7rem, 4vw, 2.4rem);
+  letter-spacing: -0.015em;
+  text-align: center;
+  color: var(--sky-950);
+  margin-bottom: 10px;
+}
+.page-sub {
+  text-align: center;
+  color: var(--ink-dim);
+  font-size: 0.96rem;
+  max-width: 560px;
+  margin: 0 auto 36px;
+  line-height: 1.6;
+}
+
+/* ----------------------------------------------------------
+   TRACK-AGAIN SEARCH BAR
+   ---------------------------------------------------------- */
+.track-again {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  max-width: 640px;
+  margin: 0 auto 40px;
+  background: var(--surface-glass-strong);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 8px 8px 20px;
+  box-shadow: var(--shadow-fluent);
+}
+.track-again .tf-icon { color: var(--ink-dimmer); display: flex; flex-shrink: 0; }
+.track-again .tf-icon svg { width: 17px; height: 17px; }
+.track-again input {
+  flex: 1; border: none; background: transparent; outline: none;
+  font-family: var(--font-body); font-size: 0.92rem; color: var(--ink);
+  min-width: 0;
+}
+.track-again input::placeholder { color: var(--ink-dimmer); }
+.track-again button {
+  padding: 12px 22px; border-radius: 999px; border: none; cursor: pointer;
+  background: linear-gradient(180deg, var(--sky-600), var(--sky-900)); color: var(--white);
+  font-weight: 700; font-size: 0.88rem; white-space: nowrap;
+  box-shadow: 0 10px 22px -10px rgba(11,61,104,0.5);
+  transition: transform 0.15s ease;
+}
+.track-again button:hover { transform: translateY(-1px); }
+
+/* ----------------------------------------------------------
+   LOADING SKELETONS
+   ---------------------------------------------------------- */
+.skeleton {
+  background: linear-gradient(90deg, var(--sky-100) 25%, var(--sky-50) 37%, var(--sky-100) 63%);
+  background-size: 400% 100%;
+  animation: skWave 1.4s ease infinite;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-soft);
+}
+@keyframes skWave { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+.skeleton-row { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 20px; }
+@media (min-width: 860px) { .skeleton-row { grid-template-columns: 1.5fr 1fr; } }
+.skeleton-card { height: 260px; }
+.skeleton-card-sm { height: 260px; }
+.skeleton-block { height: 130px; margin-bottom: 20px; }
+.skeleton-block-lg { height: 220px; }
+
+/* ----------------------------------------------------------
+   ERROR / EMPTY STATE
+   ---------------------------------------------------------- */
+.state-block {
+  max-width: 520px; margin: 20px auto; text-align: center;
+  padding: 44px 28px; border: 1px dashed var(--line); border-radius: var(--radius-xl);
+  background: var(--surface-tint);
+}
+.state-block .state-icon { width: 44px; height: 44px; margin: 0 auto 16px; color: var(--err); }
+.state-block p { color: var(--ink-dim); font-size: 0.92rem; line-height: 1.6; margin-bottom: 20px; }
+
+/* ----------------------------------------------------------
+   REVEAL EFFECT — Windows 11 "mica" pointer glow
+   Any element with .reveal gets a soft radial highlight that
+   tracks the cursor via --mx/--my (set by tracking.js). Works
+   on cards, buttons, and list rows alike.
+   ---------------------------------------------------------- */
+.reveal {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.reveal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    220px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(46, 143, 209, 0.16),
+    rgba(46, 143, 209, 0.05) 45%,
+    transparent 70%
+  );
+  transition: opacity 0.25s ease;
+}
+.reveal:hover::before,
+.reveal.reveal-active::before { opacity: 1; }
+.reveal > * { position: relative; z-index: 1; }
+
+/* Smaller / tighter glow radius for compact controls (buttons, waypoints) */
+.icon-btn.reveal::before,
+.pill-btn.reveal::before,
+.waypoint.reveal::before {
+  background: radial-gradient(
+    90px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(46, 143, 209, 0.22),
+    transparent 70%
+  );
+}
+.tl-item.reveal::before {
+  background: radial-gradient(
+    260px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(46, 143, 209, 0.10),
+    transparent 70%
+  );
+}
+
+/* ----------------------------------------------------------
+   SUMMARY GRID (waybill + ETA)
+   ---------------------------------------------------------- */
+.tracking-summary-grid {
+  display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 24px;
+}
+@media (min-width: 860px) { .tracking-summary-grid { grid-template-columns: 1.55fr 1fr; align-items: stretch; } }
+
+/* ----------------------------------------------------------
+   WAYBILL CARD
+   ---------------------------------------------------------- */
+.waybill-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-fluent-lg);
+  display: flex; flex-direction: column;
+}
+.waybill-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 14px; flex-wrap: wrap; padding: 24px 26px 0;
+}
+.wb-eyebrow {
+  font-family: var(--font-body); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--sky-600); margin-bottom: 6px;
+}
+.waybill-tracking {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(1.25rem, 3vw, 1.6rem); letter-spacing: -0.01em; color: var(--sky-950);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 9px;
+  border: 1px solid var(--line); background: var(--sky-50); color: var(--ink-dim);
+  cursor: pointer; flex-shrink: 0; transition: border-color 0.15s ease, color 0.15s ease;
+}
+.icon-btn:hover { border-color: var(--sky-500); color: var(--sky-700); }
+.icon-btn svg { width: 15px; height: 15px; }
+
+.status-badge {
+  font-family: var(--font-body); font-weight: 700; font-size: 0.76rem;
+  letter-spacing: 0.03em; padding: 8px 16px; border-radius: 999px; white-space: nowrap;
+  border: 1px solid transparent;
+}
+.status-badge.st-pending  { color: var(--ink-dim);  background: var(--sky-50);  border-color: var(--line); }
+.status-badge.st-transit,
+.status-badge.st-shipped  { color: var(--sky-800);  background: var(--sky-100); border-color: var(--sky-200); }
+.status-badge.st-delivered{ color: #0E6B4B; background: rgba(31,169,122,0.12); border-color: rgba(31,169,122,0.35); }
+
+.wb-divider { height: 1px; background: var(--line-soft); margin: 20px 26px 0; }
+
+.waybill-body {
+  padding: 20px 26px;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 24px;
+}
+@media (min-width: 520px) { .waybill-body { grid-template-columns: repeat(3, 1fr); } }
+.wb-field.wb-span-2 { grid-column: 1 / -1; }
+.wb-label {
+  font-family: var(--font-body); font-size: 0.66rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--sky-600); margin-bottom: 5px;
+}
+.wb-value { font-size: 0.94rem; font-weight: 600; color: var(--sky-950); line-height: 1.4; word-break: break-word; }
+.wb-mono { font-family: 'JetBrains Mono', var(--font-body); font-size: 0.86rem; font-weight: 500; }
+
+.waybill-actions {
+  margin-top: auto;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  padding: 4px 26px 24px;
+}
+.live-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 13px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--sky-50); font-size: 0.72rem; color: var(--ink-dim); font-weight: 600;
+}
+.live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex-shrink: 0; animation: pulseDot 2s ease-out infinite; }
+@keyframes pulseDot {
+  0% { box-shadow: 0 0 0 0 rgba(31,169,122,0.55); }
+  70% { box-shadow: 0 0 0 6px rgba(31,169,122,0); }
+  100% { box-shadow: 0 0 0 0 rgba(31,169,122,0); }
+}
+.pill-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 9px 15px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink-dim); font-size: 0.8rem; font-weight: 600;
+  cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+.pill-btn:hover { border-color: var(--sky-500); color: var(--sky-700); box-shadow: var(--shadow-fluent); }
+.pill-btn svg { width: 14px; height: 14px; }
+
+/* ----------------------------------------------------------
+   ETA CARD
+   ---------------------------------------------------------- */
+.eta-card {
+  background: linear-gradient(165deg, var(--sky-900), var(--sky-700));
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-fluent-lg);
+  padding: 26px 24px;
+  color: var(--white);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.eta-eyebrow {
+  font-family: var(--font-body); font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--sky-200); margin-bottom: 8px;
+}
+.eta-date { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; margin-bottom: 2px; }
+.eta-days { font-size: 0.84rem; color: var(--sky-200); margin-bottom: 18px; }
+
+.eta-ring-wrap { position: relative; width: 120px; height: 120px; margin-bottom: 16px; }
+.eta-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.eta-ring-track { fill: none; stroke: rgba(255,255,255,0.18); stroke-width: 9; }
+.eta-ring-fill {
+  fill: none; stroke: var(--white); stroke-width: 9; stroke-linecap: round;
+  stroke-dasharray: 327; stroke-dashoffset: 327;
+  transition: stroke-dashoffset 0.8s ease;
+}
+.eta-ring-label {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; color: var(--white);
+}
+.eta-note { font-size: 0.78rem; color: var(--sky-200); line-height: 1.5; }
+
+/* ----------------------------------------------------------
+   ROUTE PROGRESS
+   ---------------------------------------------------------- */
+.route-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl);
+  padding: 28px 26px 22px; margin-bottom: 24px; box-shadow: var(--shadow-fluent);
+}
+.section-label {
+  font-family: var(--font-body); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--sky-600); margin-bottom: 18px;
+}
+.route-rail { position: relative; display: flex; justify-content: space-between; padding: 0 4px; margin-top: 6px; }
+.route-track { position: absolute; top: 17px; left: 20px; right: 20px; height: 3px; background: var(--sky-100); border-radius: 3px; }
+.route-fill {
+  position: absolute; top: 17px; left: 20px; height: 3px; border-radius: 3px;
+  background: linear-gradient(90deg, var(--sky-500), var(--sky-900));
+  width: 0%; transition: width 0.6s ease;
+}
+.route-vessel {
+  position: absolute; top: 6px; left: 20px; width: 22px; height: 22px;
+  transform: translateX(-50%); color: var(--sky-700);
+  transition: left 0.6s ease;
+  filter: drop-shadow(0 3px 6px rgba(11,61,104,0.35));
+}
+.route-vessel svg { width: 100%; height: 100%; }
+
+.waypoint {
+  position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center;
+  gap: 10px; width: 25%; text-align: center; border-radius: var(--radius-md); padding: 6px 4px;
+}
+.wp-dot {
+  width: 34px; height: 34px; border-radius: 10px; background: var(--sky-50);
+  border: 1.5px solid var(--line); display: flex; align-items: center; justify-content: center;
+  color: var(--ink-dimmer); transition: all 0.3s ease;
+}
+.wp-dot svg { width: 15px; height: 15px; }
+.waypoint.done .wp-dot { border-color: var(--sky-500); color: var(--sky-700); background: var(--sky-100); }
+.waypoint.current .wp-dot {
+  border-color: var(--sky-600); color: var(--white); background: linear-gradient(160deg, var(--sky-500), var(--sky-900));
+  box-shadow: 0 0 0 5px rgba(46,143,209,0.16);
+}
+.wp-label { font-size: 0.74rem; color: var(--ink-dimmer); font-weight: 600; line-height: 1.3; }
+.waypoint.done .wp-label, .waypoint.current .wp-label { color: var(--sky-950); }
+
+@media (max-width: 480px) {
+  .wp-label { font-size: 0.62rem; }
+  .wp-dot { width: 28px; height: 28px; }
+}
+
+/* ----------------------------------------------------------
+   MAP
+   ---------------------------------------------------------- */
+.map-card {
+  border-radius: var(--radius-xl); overflow: hidden; border: 1px solid var(--line);
+  margin-bottom: 24px; height: 380px; background: var(--sky-50); box-shadow: var(--shadow-fluent);
+}
+#map { height: 100%; width: 100%; }
+.leaflet-popup-content-wrapper { background: var(--surface); color: var(--ink); border-radius: 10px; }
+.leaflet-popup-tip { background: var(--surface); }
+.leaflet-popup-content { font-family: var(--font-body); font-size: 0.82rem; }
+.map-pin {
+  width: 16px; height: 16px; background: var(--sky-600); border: 2px solid var(--white);
+  border-radius: 50%; box-shadow: 0 0 0 6px rgba(46,143,209,0.22);
+}
+
+/* ----------------------------------------------------------
+   TIMELINE
+   ---------------------------------------------------------- */
+.timeline-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-xl);
+  padding: 26px; box-shadow: var(--shadow-fluent);
+}
+#timeline { position: relative; }
+.tl-item {
+  padding: 14px 14px 14px 30px; margin: 0 -14px; border-radius: var(--radius-md);
+  border-left: 1.5px solid var(--line);
+}
+.tl-item { position: relative; }
+.tl-item::before {
+  content: ""; position: absolute; left: 8px; top: 20px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--surface); border: 2px solid var(--sky-500); z-index: 2;
+}
+.tl-item:first-child::before { background: var(--sky-600); box-shadow: 0 0 0 4px rgba(46,143,209,0.18); }
+.tl-item:last-child { border-left-color: transparent; }
+
+.tl-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.tl-status { font-weight: 700; color: var(--sky-800); font-size: 0.94rem; }
+.tl-time { font-family: 'JetBrains Mono', var(--font-body); font-size: 0.72rem; color: var(--ink-dimmer); white-space: nowrap; }
+.tl-location { color: var(--ink-dim); font-size: 0.86rem; margin-bottom: 3px; }
+.tl-note { color: var(--ink-dimmer); font-size: 0.82rem; font-style: italic; }
+
+/* ----------------------------------------------------------
+   PRINT (download / print waybill)
+   ---------------------------------------------------------- */
+@media print {
+  body { background: #fff !important; }
+  header.site-header, footer.site-footer, #chatFab, #chatPanel, #scrollTopBtn,
+  .track-again, .route-card, .map-card, .timeline-card, .waybill-actions,
+  .page-eyebrow, .page-sub, #mobileMenu, .eta-note { display: none !important; }
+  .tracking-main { padding-top: 0 !important; }
+  .tracking-summary-grid { grid-template-columns: 1fr !important; }
+  .waybill-card, .eta-card { box-shadow: none !important; border: 1px solid #999 !important; }
+  .eta-card { background: #fff !important; color: #111 !important; }
+  .eta-ring-track, .eta-ring-fill { stroke: #999 !important; }
+  .icon-btn { display: none !important; }
+}
+
+.hidden { display: none !important; }
