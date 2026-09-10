@@ -1,180 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
- <!-- Favicon -->
-<link rel="icon" type="image/png" href="images/images (2).jpeg" />
-  
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="AOL Logistics Bookshop"><link rel="icon" type="image/png" href="images/images (2).jpeg">
 <title>Bookshop | AOL Logistics</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
-</head>
-<body class="bg-gray-100 text-gray-800 font-sans">
+<script src="https://cdn.tailwindcss.com"></script><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+<style>
+:root{--navy:#071a2f;--blue:#1389d8;--sky:#87CEEB;--gold:#d9a441}html{scroll-behavior:smooth}body{overflow-x:hidden}.gridbg{background-image:linear-gradient(#1389d80d 1px,transparent 1px),linear-gradient(90deg,#1389d80d 1px,transparent 1px);background-size:44px 44px}.glass{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.card{transition:.3s}.card:hover{transform:translateY(-7px);box-shadow:0 22px 55px #071a2f20}.cover{transition:.5s}.card:hover .cover{transform:scale(1.05)}.pill{border:1px solid #dce7f0;background:white;transition:.2s}.pill.active,.pill:hover{background:var(--navy);color:white}.chat{opacity:0;visibility:hidden;transform:translateY(15px) scale(.97);transition:.25s}.chat.open{opacity:1;visibility:visible;transform:none}.msg{display:flex;flex-direction:column;max-width:88%;margin:10px 0}.user{margin-left:auto;align-items:flex-end}.bubble{padding:11px 13px;border-radius:16px;white-space:pre-line;font-size:13px;line-height:1.55}.user .bubble{background:var(--navy);color:#fff;border-bottom-right-radius:5px}.bot .bubble{background:#eef6fb;color:#17304a;border-bottom-left-radius:5px}.meta{font-size:10px;color:#8291a1;margin-top:4px;padding:0 4px}.qbtn{border:1px solid #d7e5ef;border-radius:999px;padding:7px 10px;font-size:11px;background:white;white-space:nowrap}.typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#7892a7;margin:0 2px;animation:b 1s infinite}.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}@keyframes b{30%{transform:translateY(-4px)}60%,100%{transform:translateY(0)}}@media(max-width:640px){.chat{left:12px!important;right:12px!important;width:auto!important;bottom:88px!important}}
+</style></head>
+<body class="bg-[#f7f9fc] text-[#102238] font-sans">
+<header class="fixed inset-x-0 top-0 z-50 bg-[#071a2f]/95 text-white border-b border-white/10 backdrop-blur-xl"><div class="max-w-7xl mx-auto h-[76px] px-5 flex items-center justify-between">
+<a href="home.html" class="flex items-center gap-3"><svg width="42" height="42" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="30" stroke="#87CEEB" stroke-width="2"/><path d="M11 39c8-11 18-16 31-15 5 .4 9 1.8 12 4.4M17 47c9-8 19-11 29-9M13 22c7-4 14-6 22-5" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="46" cy="28" r="4" fill="#87CEEB"/></svg><div><b class="tracking-[.12em]">AOL LOGISTICS</b><small class="block text-[9px] tracking-[.25em] text-sky-200">GLOBAL SHIPPING & MORE</small></div></a>
+<nav class="hidden md:flex gap-7 text-sm"><a href="home.html" class="text-slate-300 hover:text-white">Home</a><a href="tracking.html" class="text-slate-300 hover:text-white">Track Shipment</a><a href="form.html" class="text-slate-300 hover:text-white">Create Shipment</a><a href="#books" class="font-bold">Bookshop</a><a href="#contact" class="text-slate-300 hover:text-white">Contact</a></nav>
+<div class="hidden md:flex gap-3"><button id="lang" class="rounded-full border border-white/20 px-4 py-2 text-xs">한국어</button><a href="tracking.html" class="rounded-full bg-[#1389d8] px-5 py-2.5 text-sm font-bold">Track a shipment</a></div><button id="menu" class="md:hidden border border-white/20 rounded-xl px-3 py-2 text-xl">☰</button></div>
+<div id="mobile" class="hidden md:hidden bg-[#071a2f] border-t border-white/10 p-4"><a class="block p-3" href="home.html">Home</a><a class="block p-3" href="tracking.html">Track Shipment</a><a class="block p-3" href="form.html">Create Shipment</a><a class="block p-3 bg-white/10 rounded-lg" href="#books">Bookshop</a><a class="block p-3" href="#contact">Contact</a></div></header>
 
-<!-- Header -->
-<header class="bg-[#003366] text-white shadow-lg sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <h1 class="text-xl font-bold">AOL Bookshop</h1>
-    <nav class="hidden md:flex space-x-6 mr-4">
-      <a href="home.html" class="hover:text-yellow-400">Home</a>
-      <a href="#books" class="hover:text-yellow-400">Books</a>
-      <a href="#contact" class="hover:text-yellow-400">Contact</a>
-    </nav>
-    <button id="menuBtn" class="md:hidden text-2xl">☰</button>
-  </div>
-  <div id="mobileMenu" class="hidden md:hidden bg-[#00264d] p-4 space-y-4 text-white">
-    <a href="home.html" class="block hover:text-yellow-400">Home</a>
-    <a href="#books" class="block hover:text-yellow-400">Books</a>
-    <a href="#contact" class="block hover:text-yellow-400">Contact</a>
-  </div>
-</header>
+<section class="pt-32 pb-20 md:pt-40 md:pb-28 bg-white gridbg relative overflow-hidden"><div class="max-w-7xl mx-auto px-5 grid lg:grid-cols-[1.08fr_.92fr] gap-12 items-center"><div data-aos="fade-up"><span class="inline-flex rounded-full bg-blue-50 border border-blue-100 px-4 py-2 text-xs font-black uppercase tracking-[.18em] text-[#0d6da9]">AOL Bookshop</span><h1 class="mt-6 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight text-[#071a2f]">Books that move your <span class="text-[#1389d8]">knowledge forward.</span></h1><p class="mt-6 max-w-xl text-lg leading-8 text-slate-600">Discover educational, nursing, medical, business and professional books selected to help you learn, grow and stay ahead.</p><div class="mt-8 flex flex-wrap gap-3"><a href="#books" class="rounded-full bg-[#071a2f] text-white px-6 py-3.5 font-bold">Explore books</a><a href="#collections" class="rounded-full border border-slate-300 px-6 py-3.5 font-bold hover:border-[#1389d8]">Browse collections</a></div><div class="mt-8 flex gap-6 text-xs text-slate-500"><span>✓ Curated titles</span><span>✓ Easy ordering</span><span>✓ Support</span></div></div>
+<div data-aos="fade-left" class="relative"><div class="absolute -inset-4 bg-sky-100 rounded-[32px] rotate-2"></div><div class="relative rounded-[28px] bg-[#071a2f] p-7 shadow-2xl text-white"><p class="text-sky-200 text-xs font-bold uppercase tracking-[.2em]">Featured reading</p><h2 class="mt-3 text-3xl font-black">Learn. Grow. Lead.</h2><p class="mt-3 text-sm leading-7 text-slate-300">Build a stronger professional shelf with practical resources for healthcare, logistics, business and personal development.</p><div class="grid grid-cols-3 gap-3 mt-7"><div class="rounded-2xl bg-white/10 p-4 text-center"><b class="text-2xl">28+</b><small class="block text-slate-300">Titles</small></div><div class="rounded-2xl bg-white/10 p-4 text-center"><b class="text-2xl">5</b><small class="block text-slate-300">Categories</small></div><div class="rounded-2xl bg-white/10 p-4 text-center"><b class="text-2xl">24/7</b><small class="block text-slate-300">Support</small></div></div></div></div></div></section>
 
-<!-- Hero Section -->
-<section class="text-center py-20 bg-cover bg-center text-white" style="background-image:url('https://images.unsplash.com/photo-1512820790803-83ca734da794');">
-  <div class="bg-[#00000099] py-20 px-6">
-    <h2 class="text-4xl font-extrabold mb-4">Welcome to Our Bookshop</h2>
-    <p class="text-lg max-w-2xl mx-auto">Buy educational, motivational and logistics related books with affordable prices.</p>
-  </div>
-</section>
+<section id="books" class="py-20"><div class="max-w-7xl mx-auto px-5"><div class="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-8"><div><p class="text-[#1389d8] text-xs font-black uppercase tracking-[.2em]">Our library</p><h2 class="mt-2 text-3xl sm:text-4xl font-black text-[#071a2f]">Find your next book</h2><p class="mt-2 text-slate-500">Search by title or filter by collection.</p></div><div class="relative w-full md:w-80"><input id="search" class="w-full rounded-full border border-slate-200 bg-white px-5 py-3.5 pl-11 outline-none focus:border-[#1389d8]" placeholder="Search books..."><span class="absolute left-4 top-3.5 text-slate-400">⌕</span></div></div>
+<div id="filters" class="flex gap-2 overflow-x-auto pb-3 mb-7"><button class="pill active px-4 py-2 rounded-full text-xs font-bold" data-cat="All">All books</button><button class="pill px-4 py-2 rounded-full text-xs font-bold" data-cat="Nursing">Nursing & Medical</button><button class="pill px-4 py-2 rounded-full text-xs font-bold" data-cat="Business">Business</button><button class="pill px-4 py-2 rounded-full text-xs font-bold" data-cat="Logistics">Logistics</button><button class="pill px-4 py-2 rounded-full text-xs font-bold" data-cat="Research">Research</button></div>
+<div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div><div id="empty" class="hidden text-center py-16"><div class="text-4xl">📚</div><h3 class="font-black text-xl mt-3">No books found</h3><p class="text-slate-500 text-sm">Try another search or category.</p></div><div class="text-center mt-10"><button id="more" class="rounded-full bg-[#071a2f] text-white px-7 py-3.5 font-bold hover:bg-[#1389d8]">Load more books</button></div></div></section>
 
-<!-- Books Section -->
-<section id="books" class="py-16 max-w-7xl mx-auto px-6">
-  <h3 class="text-3xl font-bold text-center mb-10 text-[#003366]">Available Books</h3>
-  <div id="bookGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8" data-aos="fade-up"></div>
-  <div class="text-center mt-10">
-    <button id="loadBtn" onclick="loadMore()" class="px-6 py-3 bg-black text-white hover:bg-yellow-400 hover:text-black transition rounded-full">
-      Load More Books
-    </button>
-  </div>
-</section>
+<section id="collections" class="py-20 bg-white"><div class="max-w-7xl mx-auto px-5"><div class="text-center max-w-2xl mx-auto"><p class="text-[#1389d8] text-xs font-black uppercase tracking-[.2em]">Curated for you</p><h2 class="mt-2 text-3xl sm:text-4xl font-black text-[#071a2f]">Featured collections</h2><p class="mt-3 text-slate-500">Focused collections for real learning and professional growth.</p></div><div class="grid md:grid-cols-3 gap-6 mt-10"><article class="rounded-3xl bg-[#071a2f] text-white p-7 min-h-[220px]"><div class="text-3xl">🩺</div><h3 class="mt-6 text-xl font-black">Academic & Research</h3><p class="mt-2 text-sm text-slate-300 leading-6">Medical, nursing, science and research resources for serious study.</p><a href="#books" data-f="Nursing" class="inline-block mt-5 text-sky-200 font-bold">Explore →</a></article><article class="rounded-3xl bg-[#eaf6fc] p-7 min-h-[220px]"><div class="text-3xl">📈</div><h3 class="mt-6 text-xl font-black">Business & Growth</h3><p class="mt-2 text-sm text-slate-600 leading-6">Build business thinking, communication and entrepreneurial skills.</p><a href="#books" data-f="Business" class="inline-block mt-5 text-[#0d76bc] font-bold">Explore →</a></article><article class="rounded-3xl bg-[#f7f1e5] p-7 min-h-[220px]"><div class="text-3xl">📦</div><h3 class="mt-6 text-xl font-black">Logistics & Trade</h3><p class="mt-2 text-sm text-slate-600 leading-6">Learn about logistics, global trade and modern supply chains.</p><a href="#books" data-f="Logistics" class="inline-block mt-5 text-[#9a711e] font-bold">Explore →</a></article></div></div></section>
 
+<section class="py-20 bg-[#071a2f] text-white text-center"><div class="max-w-4xl mx-auto px-5"><span class="rounded-full bg-white/10 px-4 py-2 text-xs font-bold text-sky-200">STAY IN THE LOOP</span><h2 class="mt-5 text-3xl sm:text-4xl font-black">Get new books and offers</h2><p class="mt-3 text-slate-300">Receive selected new releases and occasional AOL offers.</p><form id="sub" class="mt-7 flex flex-col sm:flex-row gap-3 max-w-lg mx-auto"><input id="email" required type="email" placeholder="Enter your email..." class="flex-1 rounded-full px-5 py-3.5 text-slate-900"><button class="rounded-full bg-[#1389d8] px-7 py-3.5 font-bold">Subscribe</button></form><p id="submsg" class="text-sky-200 text-xs mt-3 hidden"></p></div></section>
+<footer id="contact" class="bg-[#041221] text-white"><div class="max-w-7xl mx-auto px-5 py-12 grid md:grid-cols-4 gap-10"><div class="md:col-span-2"><b class="tracking-[.12em]">AOL LOGISTICS</b><p class="mt-5 max-w-md text-sm leading-7 text-slate-400">Connecting continents with reliable shipping and logistics solutions — and making useful knowledge easier to access.</p></div><div><h4 class="font-black">Quick links</h4><div class="mt-4 space-y-3 text-sm text-slate-400"><a class="block" href="home.html">Home</a><a class="block" href="tracking.html">Track shipment</a><a class="block" href="form.html">Create shipment</a><a class="block" href="#books">Bookshop</a></div></div><div><h4 class="font-black">Contact</h4><div class="mt-4 space-y-3 text-sm text-slate-400"><a class="block" href="mailto:support@aollogistics.com">support@aollogistics.com</a><a class="block" href="tel:+12138004349">+1 213 800 4349</a><button id="contactChat" class="text-sky-200">Chat with AOL Support</button></div></div></div><div class="max-w-7xl mx-auto px-5 pb-6 text-xs text-slate-500">© 2025 AOL Logistics. All Rights Reserved.</div></footer>
 
-<!-- Additional Sections -->
-<section class="py-16 bg-gray-50">
- <div class="container mx-auto px-6 text-center">
-  <h2 class="text-3xl font-bold mb-4">Featured Collections</h2>
-  <p class="text-gray-600 max-w-2xl mx-auto mb-10">Explore bestselling books from various genres carefully selected for knowledge, inspiration and growth.</p>
-  <div class="grid md:grid-cols-3 gap-6">
-   <div class="bg-white shadow-lg rounded-lg p-6">
-    <h3 class="font-semibold text-xl mb-2">Academic & Research</h3>
-    <p class="text-gray-600 text-sm mb-4">Medical, Nursing, Engineering, Science publications.</p>
-    <a class="text-black font-medium hover:text-yellow-400" href="#">View Collection →</a>
-   </div>
-   <div class="bg-white shadow-lg rounded-lg p-6">
-    <h3 class="font-semibold text-xl mb-2">Business & Self-Development</h3>
-    <p class="text-gray-600 text-sm mb-4">Become financially smarter and build a growth mindset.</p>
-    <a class="text-black font-medium hover:text-yellow-400" href="#">View Collection →</a>
-   </div>
-   <div class="bg-white shadow-lg rounded-lg p-6">
-    <h3 class="font-semibold text-xl mb-2">Novels & Literature</h3>
-    <p class="text-gray-600 text-sm mb-4">Fictional stories, thrillers, romance and classics.</p>
-    <a class="text-black font-medium hover:text-yellow-400" href="#">View Collection →</a>
-   </div>
-  </div>
- </div>
-</section>
+<button id="fab" class="fixed right-5 bottom-5 z-[80] w-16 h-16 rounded-full bg-[#1389d8] text-white shadow-2xl grid place-items-center text-2xl" aria-label="Open AOL Support">💬</button><div id="chat" class="chat fixed right-5 bottom-24 z-[79] w-[370px] max-w-[calc(100vw-24px)] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-2xl"><div class="bg-[#071a2f] text-white p-4 flex justify-between items-center"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-[#1389d8] grid place-items-center">🤖</div><div><b class="text-sm">AOL Support</b><small id="status" class="block text-[10px] text-sky-200">● AI Assistant</small></div></div><button id="close" class="text-2xl">×</button></div><div id="chatbody" class="h-[330px] overflow-y-auto p-4"></div><div class="border-t p-3 bg-slate-50"><div id="quick" class="flex gap-2 overflow-x-auto mb-2"></div><div class="flex items-end gap-2"><textarea id="chatinput" rows="1" maxlength="600" placeholder="Type a message..." class="flex-1 resize-none rounded-2xl border px-4 py-3 text-sm outline-none focus:border-[#1389d8]"></textarea><button id="send" class="w-11 h-11 rounded-2xl bg-[#071a2f] text-white">➤</button></div></div></div>
 
-<!-- Scripts -->
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script>AOS.init();</script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script><script>AOS.init({duration:650,once:true,offset:60});</script>
 <script>
-  document.getElementById('menuBtn').onclick = ()=>{
-    document.getElementById('mobileMenu').classList.toggle('hidden');
-  }
+const books=[
+['Understanding Logistics',12.99,'Logistics','https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=700&q=85'],['Business Growth Mindset',15.99,'Business','https://images.unsplash.com/photo-1512820790803-83ca734da794?w=700&q=85'],['Nursing Made Easy',18.49,'Nursing','https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=700&q=85'],['Global Trade & Policies',14.25,'Logistics','https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=700&q=85'],['Advanced Medical Terminology',21.85,'Nursing','https://images.unsplash.com/photo-1553729784-e91953dec042?w=700&q=85'],['Pharmacology Quick Guide',17.10,'Nursing','https://images.unsplash.com/photo-1554774853-b414d2a2b3a9?w=700&q=85'],['Modern Nursing Ethics',19.75,'Nursing','https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=700&q=85'],['Fundamentals of Anatomy',23.50,'Nursing','https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=700&q=85'],['Health Assessment Handbook',20,'Nursing','https://images.unsplash.com/photo-1457694587812-e8bf29a43845?w=700&q=85'],['First Aid Essentials',11.5,'Nursing','https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=700&q=85'],['Psychology for Nurses',16.4,'Nursing','https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85'],['Maternal & Child Care',22.3,'Nursing','https://images.unsplash.com/photo-1463320726281-696a485928c7?w=700&q=85'],['Clinical Procedures Manual',27.1,'Nursing','https://images.unsplash.com/photo-1532012197267-da84d127e765?w=700&q=85'],['Surgical Nursing Guide',19.9,'Nursing','https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=700&q=85'],['Emergency Nursing Care',24.7,'Nursing','https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=700&q=85'],['Microbiology Simplified',15.6,'Nursing','https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=700&q=85'],['Nutrition & Dietetics',18.3,'Nursing','https://images.unsplash.com/photo-1519681393784-d120267933ba?w=700&q=85'],['Epidemiology Essentials',20.55,'Research','https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=700&q=85'],['Community Health Nursing',21.99,'Nursing','https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=700&q=85'],['Medical-Surgical Handbook',25.2,'Nursing','https://images.unsplash.com/photo-1512820790803-83ca734da794?w=700&q=85'],['Entrepreneurship for Nurses',17.8,'Business','https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=700&q=85'],['Critical Care Nursing',26.4,'Nursing','https://images.unsplash.com/photo-1457694587812-e8bf29a43845?w=700&q=85'],['Research Methods in Nursing',24.99,'Research','https://images.unsplash.com/photo-1532012197267-da84d127e765?w=700&q=85'],['Human Physiology Deep Dive',28.6,'Nursing','https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=700&q=85'],['Advanced Cardiology Notes',31.2,'Nursing','https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=700&q=85'],['Medical Lab Techniques',22.1,'Nursing','https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=700&q=85'],['Professional Communication',14.99,'Business','https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=700&q=85'],['Advanced Pathology',29.5,'Nursing','https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=700&q=85']];
+let visible=8,cat='All',query='';const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function render(){let list=books.filter(b=>(cat==='All'||b[2]===cat)&&(!query||b[0].toLowerCase().includes(query.toLowerCase())||b[2].toLowerCase().includes(query.toLowerCase())));let g=document.getElementById('grid');g.innerHTML=list.slice(0,visible).map(b=>`<article class="card bg-white rounded-3xl border border-slate-100 overflow-hidden"><div class="h-64 overflow-hidden bg-slate-100 relative"><img class="cover w-full h-full object-cover" loading="lazy" src="${b[3]}" alt="${esc(b[0])}"><span class="absolute top-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase text-[#0d6da9]">${b[2]}</span></div><div class="p-5"><h3 class="font-black leading-6 min-h-[48px]">${esc(b[0])}</h3><div class="flex justify-between items-center mt-4"><b class="text-xl text-[#1389d8]">$${b[1].toFixed(2)}</b></div><a href="payment.html?title=${encodeURIComponent(b[0])}&price=${b[1]}" class="mt-4 block rounded-2xl bg-[#071a2f] text-white text-center py-3 font-bold hover:bg-[#1389d8]">Buy now</a></div></article>`).join('');document.getElementById('empty').classList.toggle('hidden',!!list.length);document.getElementById('more').style.display=(visible<list.length?'inline-flex':'none');AOS.refresh()}
+render();document.getElementById('more').onclick=()=>{visible+=8;render()};document.getElementById('search').oninput=e=>{query=e.target.value;visible=8;render()};document.querySelectorAll('[data-cat]').forEach(x=>x.onclick=()=>{cat=x.dataset.cat;visible=8;document.querySelectorAll('[data-cat]').forEach(y=>y.classList.toggle('active',y===x));render()});document.querySelectorAll('[data-f]').forEach(x=>x.onclick=()=>{cat=x.dataset.f;visible=8;document.querySelectorAll('[data-cat]').forEach(y=>y.classList.toggle('active',y.dataset.cat===cat));render()});
+document.getElementById('menu').onclick=()=>document.getElementById('mobile').classList.toggle('hidden');document.getElementById('sub').onsubmit=e=>{e.preventDefault();localStorage.setItem('aol_bookshop_subscriber',document.getElementById('email').value);document.getElementById('submsg').textContent='You are subscribed. Thanks for joining!';document.getElementById('submsg').classList.remove('hidden');e.target.reset()};
 
-  const books = [
-    { title: "Understanding Logistics", price: 12.99, img:"https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=500&q=80" },
-    { title: "Business Growth Mindset", price: 15.99, img:"https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&q=80" },
-    { title: "Nursing Made Easy", price: 18.49, img:"https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=500&q=80" },
-    { title: "Global Trade & Policies", price: 14.25, img:"https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=500&q=80" },
-    { title: "Advanced Medical Terminology", price: 21.85, img:"https://images.unsplash.com/photo-1553729784-e91953dec042?w=500&q=80" },
-    { title: "Pharmacology Quick Guide", price: 17.10, img:"https://images.unsplash.com/photo-1554774853-b414d2a2b3a9?w=500&q=80" },
-    { title: "Modern Nursing Ethics", price: 19.75, img:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=500&q=80" },
-    { title: "Fundamentals of Anatomy", price: 23.50, img:"https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&q=80" },
-
-      // AUTO LOAD MORE (20+ BOOKS)
-  { title:"Health Assessment Handbook", price: 20.00, img:"https://images.unsplash.com/photo-1457694587812-e8bf29a43845?w=500&q=80"},
-  { title:"First Aid Essentials", price: 11.50, img:"https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=500&q=80"},
-  { title:"Psychology for Nurses",price:16.40, img:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&q=80"},
-  { title:"Maternal & Child Care",price:22.30, img:"https://images.unsplash.com/photo-1463320726281-696a485928c7?w=500&q=80"},
-  { title:"Clinical Procedures Manual",price:27.10, img:"https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500&q=80"},
-  { title:"Surgical Nursing Guide",price:19.90, img:"https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=500&q=80"},
-  { title:"Emergency Nursing Care",price:24.70, img:"https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&q=80"},
-  { title:"Microbiology Simplified",price:15.60, img:"https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=500&q=80"},
-  { title:"Nutrition & Dietetics",price:18.30, img:"https://images.unsplash.com/photo-1519681393784-d120267933ba?w=500&q=80"},
-  { title:"Epidemiology Essentials",price:20.55, img:"https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=500&q=80"},
-  { title:"Community Health Nursing",price:21.99, img:"https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500&q=80"},
-  { title:"Medical‒Surgical Handbook",price:25.20, img:"https://images.unsplash.com/photo-1512820790803-83ca734da794?w=500&q=80"},
-  { title:"Entrepreneurship for Nurses",price:17.80, img:"https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=500&q=80"},
-  { title:"Critical Care Nursing",price: 26.40, img:"https://images.unsplash.com/photo-1457694587812-e8bf29a43845?w=500&q=80"},
-  { title:"Research Methods in Nursing",price: 24.99, img:"https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500&q=80"},
-  { title:"Human Physiology Deep Dive",price: 28.60, img:"https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=500&q=80"},
-  { title:"Advanced Cardiology Notes",price: 31.20, img:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500&q=80"},
-  { title:"Medical Lab Techniques",price: 22.10, img:"https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=500&q=80"},
-  { title:"Professional Communication",price: 14.99, img:"https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=500&q=80"},
-  { title:"Advanced Pathology",price: 29.50, img:"https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=500&q=80"}
-  ];
-
-  let visibleBooks = 8;
-
-  function loadBooks() {
-    const grid = document.getElementById('bookGrid');
-    grid.innerHTML = '';
-    books.slice(0, visibleBooks).forEach(book => {
-      grid.innerHTML += `
-        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:scale-105 duration-300">
-          <img src="${book.img}" class="w-full h-60 object-cover" />
-          <div class="p-4">
-            <h3 class="font-semibold text-lg">${book.title}</h3>
-            <p class="font-bold mt-2 text-yellow-600">$${book.price}</p>
-            <a href="payment.html?title=${encodeURIComponent(book.title)}&price=${book.price}" class="block mt-3 bg-[#003366] text-white text-center py-2 rounded hover:bg-yellow-500 transition">Buy Now</a>
-          </div>
-        </div>
-      `;
-    });
-  }
-
-  loadBooks();
-
-  function loadMore(){
-    visibleBooks += 8;
-    if(visibleBooks >= books.length){
-      visibleBooks = books.length;
-      document.getElementById("loadBtn").style.display="none";
-    }
-    loadBooks();
-  }
-</script>
-
-
-<section class="py-20 bg-black text-white text-center">
-  <h2 class="text-4xl font-bold mb-4">Get access to premium books</h2>
-  <p class="max-w-xl mx-auto mb-6 text-gray-300">
-    Stay ahead with new releases and exclusive offers delivered directly to your inbox.
-  </p>
-
-  <div class="flex flex-col sm:flex-row justify-center items-center gap-3 px-4">
-    <input 
-      type="email" 
-      placeholder="Enter your email..." 
-      class="px-4 py-3 rounded w-full sm:w-72 text-black"
-    />
-    <button class="px-6 py-3 bg-yellow-500 text-black font-semibold rounded w-full sm:w-auto">
-      Subscribe
-    </button>
-  </div>
-</section>
-
-
-<!-- Footer -->
-<footer id="contact" class="bg-[#003366] text-white py-10 text-center">
-  <h4 class="text-xl font-bold mb-3">Contact Us</h4>
-  <p>Email: support@aollogistics.com | Phone: +1 213 800 4349</p>
-  <p class="mt-4 text-sm">© 2025 AOL Logistics. All Rights Reserved.</p>
-</footer>
-
-
-</body>
-</html>
+const fab=document.getElementById('fab'),panel=document.getElementById('chat'),body=document.getElementById('chatbody'),inp=document.getElementById('chatinput'),send=document.getElementById('send'),quick=document.getElementById('quick');let started=false;
+const reply=t=>{let q=t.toLowerCase();let m=t.match(/(?:tracking(?: number| no)?|awb|운송장(?: 번호)?)[\s:#-]*([a-z0-9-]{5,30})/i);if(m&&/\d/.test(m[1])){let n=m[1].toUpperCase();return `Got your tracking number ${n} 📦\n\ntracking.html?tracking_no=${encodeURIComponent(n)}`}if(/track|tracking|shipment|배송|추적|운송장/.test(q))return'Tracking is easy 📦 Send me your tracking number and I will take you to the tracking page.';if(/book|books|도서|책|nursing|medical|business|logistics|research/.test(q))return'You can browse the book collection above. Use search and categories to find nursing, medical, business, research and logistics titles.';if(/buy|order|purchase|payment|구매|주문|결제/.test(q))return'To order a book, click “Buy now” on the title you want. The selected title and price are passed to payment.html.';if(/contact|support|phone|email|agent|human|연락|상담|전화|이메일/.test(q))return'You can reach AOL Support at support@aollogistics.com or +1 213 800 4349.';if(/thank|thanks|감사|고마/.test(q))return"You're welcome! 😊";return'I can help with books, buying a title, tracking a shipment, delivery questions or AOL contact details. What would you like to know?'};
+function bubble(w,t){let d=document.createElement('div');d.className='msg '+(w==='user'?'user':'bot');d.innerHTML=`<div class="bubble">${esc(t)}</div><div class="meta">${w==='user'?'You':'Aria'}</div>`;body.appendChild(d);body.scrollTop=body.scrollHeight}function start(){if(started)return;started=true;bubble('bot',"Hi, I'm Aria — the AOL virtual assistant 🚚\n\nI can help with books, orders, shipment tracking and AOL support. What can I help with?");['Find a book','Track a shipment','Contact support'].forEach(x=>{let b=document.createElement('button');b.className='qbtn';b.textContent=x;b.onclick=()=>{inp.value=x;sendMsg()};quick.appendChild(b)})}function sendMsg(){let t=inp.value.trim();if(!t)return;inp.value='';quick.innerHTML='';bubble('user',t);let d=document.createElement('div');d.className='msg bot';d.innerHTML='<div class="bubble typing"><span></span><span></span><span></span></div>';body.appendChild(d);setTimeout(()=>{d.remove();bubble('bot',reply(t))},650)}fab.onclick=()=>{panel.classList.toggle('open');if(panel.classList.contains('open')){start();inp.focus()}};document.getElementById('close').onclick=()=>panel.classList.remove('open');send.onclick=sendMsg;inp.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}};document.getElementById('contactChat').onclick=()=>{panel.classList.add('open');start();inp.focus()};
+</script></body></html>
