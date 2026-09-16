@@ -1379,6 +1379,23 @@ footer {
   .live-pill { padding: 4px 8px; }
   .notif-bell { width: 36px; height: 36px; font-size: 0.9rem; }
 }
+
+/* =========================
+   FORM SECTION DIVIDERS (Edit Shipment modal)
+   ========================= */
+.modal-body h3.section-divider {
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+.modal-body h3.section-divider:first-child {
+  padding-top: 0;
+  border-top: none;
+}
+.field-hint {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin: -4px 0 10px;
+}
 </style>
 </head>
 
@@ -1794,7 +1811,7 @@ footer {
   <form id="editForm">
     <div class="modal-body">
       <!-- TRACKING -->
-      <h3>Tracking</h3>
+      <h3 class="section-divider">Tracking</h3>
       <input type="text" name="tracking_no" readonly />
 
       <select name="status">
@@ -1806,45 +1823,53 @@ footer {
       </select>
 
       <!-- SENDER -->
-      <h3>Sender</h3>
+      <h3 class="section-divider">Sender</h3>
       <input name="sender_name" placeholder="Sender Name" />
       <input name="sender_address" placeholder="Sender Address" />
       <input name="sender_ref_no" placeholder="Sender Ref No" />
 
       <!-- CUSTOMER -->
-      <h3>Customer</h3>
+      <h3 class="section-divider">Customer</h3>
       <input name="customer_name" placeholder="Customer Name" />
       <input name="email" placeholder="Email" />
       <input name="phone" placeholder="Phone" />
 
       <!-- LOCATION -->
-      <h3>Route</h3>
+      <h3 class="section-divider">Route</h3>
       <input name="origin" placeholder="Origin" />
       <input name="destination" placeholder="Destination" />
 
       <!-- PACKAGE -->
-      <h3>Package</h3>
+      <h3 class="section-divider">Package</h3>
       <input name="weight" placeholder="Weight" />
+      <input name="package_count" placeholder="Package Count (e.g. One (1))" />
       <textarea name="description" placeholder="Description"></textarea>
 
       <!-- RECEIVER -->
-      <h3>Receiver</h3>
+      <h3 class="section-divider">Receiver</h3>
       <input name="receiver_name" placeholder="Receiver Name" />
       <input name="receiver_address" placeholder="Receiver Address" />
       <input name="receiver_country" placeholder="Receiver Country" />
       <input name="receiver_contact" placeholder="Receiver Contact" />
       <input name="receiver_phone" placeholder="Receiver Phone" />
+      <input name="receiver_email" placeholder="Receiver Email" type="email" />
 
       <!-- DELIVERY -->
-      <h3>Delivery Info</h3>
+      <h3 class="section-divider">Delivery Info</h3>
       <input name="delivery_code" placeholder="Delivery Code" />
       <input name="delivery_method" placeholder="Delivery Method" />
+      <input name="item_no" placeholder="Item No." />
+      <input name="asalu_no" placeholder="Asalu No." />
 
-      <!-- FEES -->
-      <h3>Fees</h3>
+      <!-- FEES & PAYMENT -->
+      <h3 class="section-divider">Fees &amp; Payment</h3>
+      <p class="field-hint">Total, Amount Paid and Outstanding feed the customer-facing receipt on the tracking page.</p>
       <input name="reg_fee" placeholder="Registration Fee" />
       <input name="delivery_fee" placeholder="Delivery Fee" />
       <input name="insurance_fee" placeholder="Insurance Fee" />
+      <input name="total" placeholder="Total Amount" />
+      <input name="amount_paid" placeholder="Amount Paid" />
+      <input name="outstanding_amount" placeholder="Outstanding Amount" />
     </div>
 
     <div class="modal-footer">
