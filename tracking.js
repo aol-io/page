@@ -60,7 +60,54 @@ const T = {
     notAvailable: "정보 없음", unknown: "알 수 없음",
     updatedJustNow: "방금 갱신됨", updatedAgo: "분 전 갱신",
     copySuccess: "운송장 번호를 복사했습니다", copyFail: "복사에 실패했습니다",
-    shareSuccess: "링크가 복사되었습니다", noTimeline: "아직 배송 업데이트가 없습니다."
+    shareSuccess: "링크가 복사되었습니다", noTimeline: "아직 배송 업데이트가 없습니다.",
+
+    // Package Summary / Receipt modal
+    pkg_trigger_btn: "패키지 상세 / 영수증",
+    pkg_modal_title: "패키지 요약 및 영수증",
+    pkg_close_aria: "패키지 요약 닫기",
+    pkg_tagline: "최고의 배송 서비스",
+    pkg_kicker_receipt: "배송 영수증 / 청구서",
+    pkg_heading_title: "배송 정보",
+    pkg_shipment_no: "운송장 번호",
+    pkg_section_sender: "보내는 사람 정보",
+    pkg_section_receiver: "받는 사람 정보",
+    pkg_section_delivery: "배송 정보",
+    pkg_section_package: "패키지 정보",
+    pkg_full_name: "성명",
+    pkg_address: "주소",
+    pkg_reference_no: "참조 번호",
+    pkg_delivery_address: "배송 주소",
+    pkg_country: "국가",
+    pkg_contact_person: "담당자",
+    pkg_phone: "전화번호",
+    pkg_email: "이메일",
+    pkg_from: "출발지",
+    pkg_to_destination: "도착지",
+    pkg_delivery_code: "배송 코드",
+    pkg_delivery_method: "배송 방법",
+    pkg_item_no: "품목 번호",
+    pkg_asalu_no: "Asalu 번호",
+    pkg_description: "설명",
+    pkg_weight_gw: "중량 / 총중량",
+    pkg_package_count: "패키지 수량",
+    pkg_charges_kicker: "운송 요금",
+    pkg_payment_summary: "결제 요약",
+    pkg_reg_fee: "등록비",
+    pkg_delivery_fee: "배송비",
+    pkg_insurance_fee: "보험료",
+    pkg_total: "합계",
+    pkg_amount_paid: "결제 완료 금액",
+    pkg_outstanding_amount: "미결제 금액",
+    pkg_payment_details: "결제 정보",
+    pkg_paid_in_full: "전액 결제 완료",
+    pkg_balance_outstanding: "잔액 있음",
+    pkg_footer_slogan: "최고의 배송 서비스",
+    pkg_footer_note: "문의 시 이 운송장 번호를 알려주세요.",
+    pkg_print_receipt: "영수증 인쇄",
+    pkg_download_pdf: "PDF 다운로드",
+    pkg_download_image: "이미지 다운로드",
+    pkg_close: "닫기"
   },
   en: {
     track_eyebrow: "Air Waybill / Shipment Manifest",
@@ -81,7 +128,54 @@ const T = {
     notAvailable: "Not available", unknown: "Unknown",
     updatedJustNow: "Updated just now", updatedAgo: "m ago",
     copySuccess: "Tracking number copied", copyFail: "Couldn't copy",
-    shareSuccess: "Link copied to clipboard", noTimeline: "No tracking updates yet."
+    shareSuccess: "Link copied to clipboard", noTimeline: "No tracking updates yet.",
+
+    // Package Summary / Receipt modal
+    pkg_trigger_btn: "Package Details / Receipt",
+    pkg_modal_title: "Package Summary & Receipt",
+    pkg_close_aria: "Close package summary",
+    pkg_tagline: "DELIVERY SERVICE AT ITS FINEST",
+    pkg_kicker_receipt: "SHIPMENT RECEIPT / INVOICE",
+    pkg_heading_title: "Delivery Information",
+    pkg_shipment_no: "Shipment No.",
+    pkg_section_sender: "Sender's Info",
+    pkg_section_receiver: "Receiver Info",
+    pkg_section_delivery: "Delivery Information",
+    pkg_section_package: "Package Information",
+    pkg_full_name: "Full Name",
+    pkg_address: "Address",
+    pkg_reference_no: "Reference No.",
+    pkg_delivery_address: "Delivery Address",
+    pkg_country: "Country",
+    pkg_contact_person: "Contact Person",
+    pkg_phone: "Phone",
+    pkg_email: "Email",
+    pkg_from: "From",
+    pkg_to_destination: "To / Destination",
+    pkg_delivery_code: "Delivery Code",
+    pkg_delivery_method: "Delivery Method",
+    pkg_item_no: "Item No.",
+    pkg_asalu_no: "Asalu No.",
+    pkg_description: "Description",
+    pkg_weight_gw: "Weight / G.W.",
+    pkg_package_count: "Package Count",
+    pkg_charges_kicker: "TRANSPORT CHARGES",
+    pkg_payment_summary: "Payment Summary",
+    pkg_reg_fee: "Registration fee",
+    pkg_delivery_fee: "Delivery fee",
+    pkg_insurance_fee: "Insurance fee",
+    pkg_total: "Total",
+    pkg_amount_paid: "Amount Paid",
+    pkg_outstanding_amount: "Outstanding Amount",
+    pkg_payment_details: "Payment details",
+    pkg_paid_in_full: "Paid in full",
+    pkg_balance_outstanding: "Balance outstanding",
+    pkg_footer_slogan: "Delivery service at its finest",
+    pkg_footer_note: "Please quote this shipment number in an enquiry.",
+    pkg_print_receipt: "Print Receipt",
+    pkg_download_pdf: "Download PDF",
+    pkg_download_image: "Download Image",
+    pkg_close: "Close"
   }
 };
 function t(key) { return (T[getSiteLang()] && T[getSiteLang()][key]) || key; }
@@ -95,12 +189,120 @@ function applyTrackingTranslations() {
     else el.textContent = T[lang][key];
   });
   if (fetchedShipment) renderAll();
+  applyPackageSummaryTranslations();
 }
 document.getElementById("langToggle")?.addEventListener("click", () => {
   // script.js already flips localStorage's site_lang on this same click;
   // re-render our own strings right after.
   setTimeout(applyTrackingTranslations, 0);
 });
+
+/* ------------------------------------------------------------
+   1b. Package Summary / Receipt modal — static label translation
+   The modal markup and its populate()/openModal() logic live in
+   tracking.html's own inline <script>, not here. We only own the
+   *labels*, which we translate by walking from each value element's
+   known id (data-independent, safe regardless of row order).
+   ------------------------------------------------------------ */
+function applyPackageSummaryTranslations() {
+  const modal = document.getElementById("packageSummaryModal");
+  if (!modal) return;
+
+  const triggerLabel = document.getElementById("packageSummaryBtn")?.querySelector("span");
+  if (triggerLabel) triggerLabel.textContent = t("pkg_trigger_btn");
+
+  const titleEl = document.getElementById("packageSummaryTitle");
+  if (titleEl) titleEl.textContent = t("pkg_modal_title");
+
+  document.getElementById("closePackageSummary")?.setAttribute("aria-label", t("pkg_close_aria"));
+
+  const taglineEl = modal.querySelector(".receipt-tagline");
+  if (taglineEl) taglineEl.textContent = t("pkg_tagline");
+
+  const headingKicker = modal.querySelector(".receipt-heading .receipt-kicker");
+  if (headingKicker) headingKicker.textContent = t("pkg_kicker_receipt");
+  const headingTitle = modal.querySelector(".receipt-heading h3");
+  if (headingTitle) headingTitle.textContent = t("pkg_heading_title");
+  const trackingLabel = modal.querySelector(".receipt-tracking span");
+  if (trackingLabel) trackingLabel.textContent = t("pkg_shipment_no");
+
+  // Section headers, in fixed markup order: Sender, Receiver, Delivery, Package.
+  const sectionKeys = ["pkg_section_sender", "pkg_section_receiver", "pkg_section_delivery", "pkg_section_package"];
+  modal.querySelectorAll(".receipt-grid .receipt-section h4").forEach((h4, i) => {
+    if (sectionKeys[i]) h4.textContent = t(sectionKeys[i]);
+  });
+
+  // Row labels — resolved via each row's value element id, so this stays
+  // correct even if the markup order ever changes.
+  const rowLabelMap = {
+    receiptSenderName: "pkg_full_name",
+    receiptSenderAddress: "pkg_address",
+    receiptSenderRef: "pkg_reference_no",
+    receiptReceiverName: "pkg_full_name",
+    receiptReceiverAddress: "pkg_delivery_address",
+    receiptReceiverCountry: "pkg_country",
+    receiptReceiverContact: "pkg_contact_person",
+    receiptReceiverPhone: "pkg_phone",
+    receiptReceiverEmail: "pkg_email",
+    receiptOrigin: "pkg_from",
+    receiptDestination: "pkg_to_destination",
+    receiptDeliveryCode: "pkg_delivery_code",
+    receiptDeliveryMethod: "pkg_delivery_method",
+    receiptItemNo: "pkg_item_no",
+    receiptAsaluNo: "pkg_asalu_no",
+    receiptDescription: "pkg_description",
+    receiptWeight: "pkg_weight_gw",
+    receiptPackageCount: "pkg_package_count",
+    receiptRegFee: "pkg_reg_fee",
+    receiptDeliveryFee: "pkg_delivery_fee",
+    receiptInsuranceFee: "pkg_insurance_fee",
+    receiptTotal: "pkg_total",
+    receiptPaid: "pkg_amount_paid",
+    receiptOutstanding: "pkg_outstanding_amount"
+  };
+  Object.entries(rowLabelMap).forEach(([valueId, labelKey]) => {
+    const labelEl = document.getElementById(valueId)?.previousElementSibling;
+    if (labelEl) labelEl.textContent = t(labelKey);
+  });
+
+  const chargesKicker = modal.querySelector(".receipt-charges .receipt-kicker");
+  if (chargesKicker) chargesKicker.textContent = t("pkg_charges_kicker");
+  const chargesTitle = modal.querySelector(".receipt-charges h3");
+  if (chargesTitle) chargesTitle.textContent = t("pkg_payment_summary");
+
+  const footerSlogan = modal.querySelector(".receipt-footer > div span");
+  if (footerSlogan) footerSlogan.textContent = t("pkg_footer_slogan");
+  const footerNote = modal.querySelector(".receipt-note");
+  if (footerNote) footerNote.textContent = t("pkg_footer_note");
+
+  const printBtn = document.getElementById("printPackageReceipt");
+  if (printBtn) printBtn.textContent = t("pkg_print_receipt");
+  const pdfBtn = document.getElementById("downloadReceiptPdf");
+  if (pdfBtn) pdfBtn.textContent = t("pkg_download_pdf");
+  const imgBtn = document.getElementById("downloadReceiptImage");
+  if (imgBtn) imgBtn.textContent = t("pkg_download_image");
+  const closeBottomBtn = document.getElementById("closePackageSummaryBottom");
+  if (closeBottomBtn) closeBottomBtn.textContent = t("pkg_close");
+
+  translatePaymentStatus();
+}
+
+/* The inline script's populate() always writes one of three fixed English
+   strings into #receiptPaymentStatus. We capture which one just landed
+   (via a data attribute) and re-render it in the active language — that
+   way a later language switch, even without reopening the modal, still
+   shows the right label instead of trying to re-match already-translated text. */
+function translatePaymentStatus() {
+  const el = document.getElementById("receiptPaymentStatus");
+  if (!el) return;
+  const raw = el.textContent.trim();
+  if (raw === "Paid in full") el.dataset.pkgStatus = "paid";
+  else if (raw === "Balance outstanding") el.dataset.pkgStatus = "outstanding";
+  else if (raw === "Payment details") el.dataset.pkgStatus = "default";
+  const statusKey = el.dataset.pkgStatus || "default";
+  const keyMap = { paid: "pkg_paid_in_full", outstanding: "pkg_balance_outstanding", default: "pkg_payment_details" };
+  el.textContent = t(keyMap[statusKey]);
+}
 
 /* ============================================================
    2. DOM refs
@@ -486,10 +688,16 @@ document.getElementById("shareBtn")?.addEventListener("click", async () => {
 });
 document.getElementById("printBtn")?.addEventListener("click", () => window.print());
 
+// Registered after tracking.html's own inline click handler (that script
+// block appears earlier in the document, so its listener runs first and
+// populates the receipt in English) — this one just re-labels it.
+document.getElementById("packageSummaryBtn")?.addEventListener("click", () => applyPackageSummaryTranslations());
+
 /* ============================================================
    10. init
    ============================================================ */
 applyTrackingTranslations();
+applyPackageSummaryTranslations();
 loadTracking().then(() => {
   if (refreshTimer) clearInterval(refreshTimer);
   refreshTimer = setInterval(refreshTrackingIfChanged, 15000);
