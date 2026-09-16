@@ -1,6 +1,4 @@
-from pathlib import Path
-
-html = r'''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8" />
@@ -8,85 +6,33 @@ html = r'''<!DOCTYPE html>
 <title>배송 추적 - AOL LOGISTICS</title>
 <meta name="description" content="AOL Logistics - Track your shipment easily and securely.">
 
+<!-- Favicon (same inline mark as home.html) -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230B3D68'/%3E%3Cpath d='M14 40 Q24 16 34 30 T50 22' fill='none' stroke='%23FFFFFF' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='50' cy='22' r='4' fill='%23FFFFFF'/%3E%3C/svg%3E" />
 
+<!-- Google tag -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-G5C2122TVD"></script>
 <script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());gtag('config','G-G5C2122TVD');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-G5C2122TVD');
 </script>
 
+<!-- Fonts (identical to home.html) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Leaflet (map) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+<!-- Shared site styles (same file as home.html) -->
 <link rel="stylesheet" href="styles.css">
+<!-- Tracking-page-only styles (waybill, route rail, ETA, timeline, reveal effect) -->
 <link rel="stylesheet" href="tracking.css">
-
-<style>
-.package-info-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;
-  border:0;border-radius:12px;padding:11px 16px;cursor:pointer;
-  font:700 13px/1 Manrope,Inter,sans-serif;background:#0B3D68;color:#fff;
-  box-shadow:0 8px 20px rgba(11,61,104,.16);transition:.2s;
-}
-.package-info-btn:hover{transform:translateY(-1px);opacity:.94}
-.package-info-btn svg{width:17px;height:17px}
-.package-overlay{
-  position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;
-  padding:20px;background:rgba(5,16,28,.66);backdrop-filter:blur(7px);
-}
-.package-overlay.open{display:flex}
-.package-modal{
-  width:min(850px,100%);max-height:min(90vh,850px);overflow:auto;background:#fff;
-  border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.28);position:relative;
-  font-family:Inter,"Noto Sans KR",sans-serif;
-}
-.package-modal-head{
-  position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;
-  padding:22px 24px;background:#fff;border-bottom:1px solid #e8edf2;
-}
-.package-modal-head h2{margin:0;font:800 20px Manrope,Inter,sans-serif;color:#0a1628}
-.package-modal-head p{margin:5px 0 0;color:#6b7785;font-size:12px}
-.package-close{
-  width:38px;height:38px;border:0;border-radius:50%;background:#f1f4f7;color:#253443;
-  cursor:pointer;display:grid;place-items:center;font-size:22px;
-}
-.package-info-body{padding:24px}
-.package-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
-.package-section{
-  border:1px solid #e3e9ee;border-radius:16px;padding:18px;background:#fbfcfd
-}
-.package-section.full{grid-column:1/-1}
-.package-section h3{
-  margin:0 0 15px;font:800 14px Manrope,Inter,sans-serif;color:#0B3D68
-}
-.package-row{
-  display:flex;justify-content:space-between;gap:18px;padding:9px 0;border-bottom:1px solid #edf0f3;
-  font-size:13px;
-}
-.package-row:last-child{border-bottom:0}
-.package-row span:first-child{color:#73808d}
-.package-row span:last-child{text-align:right;font-weight:700;color:#172534;word-break:break-word}
-.package-total{font-size:15px!important}
-.package-outstanding{color:#b42318!important}
-.package-paid{color:#16794a!important}
-.package-empty{text-align:center;color:#77838e;padding:10px 0;font-size:13px}
-@media(max-width:650px){
-  .package-overlay{padding:10px}
-  .package-modal{border-radius:18px;max-height:94vh}
-  .package-modal-head{padding:18px}
-  .package-info-body{padding:15px}
-  .package-grid{grid-template-columns:1fr}
-  .package-section.full{grid-column:auto}
-  .package-row{align-items:flex-start}
-  .package-row span:last-child{max-width:58%}
-}
-</style>
 </head>
-
 <body>
 
+<!-- ================= HEADER (identical to home.html) ================= -->
 <header class="site-header" id="siteHeader">
   <div class="header-inner">
     <a href="home.html" class="brand">
@@ -136,6 +82,7 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
   </div>
 </header>
 
+<!-- ================= MAIN ================= -->
 <main class="tracking-main">
   <div class="wrap">
 
@@ -143,6 +90,7 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
     <h1 class="page-title"><span data-key="track_page_title">실시간 배송 추적</span></h1>
     <p class="page-sub" data-key="track_page_sub">운송장 번호를 입력하면 현재 위치와 예상 도착일을 바로 확인할 수 있습니다.</p>
 
+    <!-- ============ SEARCH AGAIN BAR ============ -->
     <form id="trackAgainForm" class="track-again reveal">
       <span class="tf-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
@@ -151,6 +99,7 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
       <button type="submit" data-key="track_button_text">추적</button>
     </form>
 
+    <!-- ============ LOADING STATE ============ -->
     <div id="loadingState">
       <div class="skeleton-row">
         <div class="skeleton skeleton-card"></div>
@@ -160,16 +109,20 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
       <div class="skeleton skeleton-block skeleton-block-lg"></div>
     </div>
 
+    <!-- ============ ERROR / EMPTY STATE ============ -->
     <div id="errorState" class="state-block hidden">
       <svg class="state-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
       <p id="errorText" data-key="invalidCodeMessage">유효하지 않은 운송장 코드입니다.</p>
       <a href="tracking-form.html" class="btn-secondary" data-key="try_again_btn">다시 시도</a>
     </div>
 
+    <!-- ============ RESULTS ============ -->
     <div id="resultsWrap" class="hidden">
 
+      <!-- summary row: waybill + ETA -->
       <div class="tracking-summary-grid">
 
+        <!-- WAYBILL CARD -->
         <div class="waybill-card reveal">
           <div class="waybill-head">
             <div>
@@ -216,31 +169,26 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
           <div class="waybill-actions">
             <span class="live-pill"><span class="live-dot"></span><span data-key="liveLabel">실시간 갱신</span></span>
             <span class="live-pill" id="updatedPill"><span id="updatedText">-</span></span>
-
             <button class="pill-btn reveal" id="refreshBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6M3 22v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.5-4.5L21 8M20.5 15a9 9 0 0 1-14.5 4.5L3 16"/></svg>
               <span data-key="refreshBtn">새로고침</span>
             </button>
-
             <button class="pill-btn reveal" id="shareBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
               <span data-key="shareBtn">공유</span>
             </button>
-
+            <button type="button" class="pill-btn reveal" id="packageSummaryBtn" aria-haspopup="dialog" aria-controls="packageSummaryModal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+              <span>패키지 상세 / 영수증</span>
+            </button>
             <button class="pill-btn reveal" id="printBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
               <span data-key="printBtn">인쇄</span>
             </button>
-
-            <button class="package-info-btn reveal" id="packageInfoBtn" type="button">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="9"/><path d="M12 10v6"/><path d="M12 7h.01"/>
-              </svg>
-              <span data-key="packageInfoBtn">Package Details</span>
-            </button>
           </div>
         </div>
 
+        <!-- ETA CARD -->
         <div class="eta-card reveal">
           <div class="eta-eyebrow" data-key="etaLabel">예상 도착</div>
           <div class="eta-date" id="etaDate">-</div>
@@ -256,6 +204,7 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
         </div>
       </div>
 
+      <!-- ============ ROUTE PROGRESS ============ -->
       <div class="route-card reveal">
         <p class="section-label" data-key="shipmentProgress">배송 진행 상황</p>
         <div class="route-rail">
@@ -264,6 +213,7 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
           <div class="route-vessel" id="routeVessel">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 16V6a1 1 0 0 1 1-1h9v11"/><path d="M13 9h4l4 4v3h-8"/><circle cx="7.5" cy="18.5" r="1.8"/><circle cx="17.5" cy="18.5" r="1.8"/></svg>
           </div>
+
           <div class="waypoint reveal" id="wpPending">
             <div class="wp-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
             <div class="wp-label" data-key="orderPlaced">주문 접수</div>
@@ -283,77 +233,20 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
         </div>
       </div>
 
+      <!-- ============ MAP ============ -->
       <div id="mapCard" class="map-card hidden reveal"><div id="map"></div></div>
 
+      <!-- ============ TIMELINE ============ -->
       <div class="timeline-card reveal">
         <p class="section-label" data-key="trackingUpdates">배송 업데이트</p>
         <div id="timeline"></div>
       </div>
+
     </div>
   </div>
 </main>
 
-<!-- PACKAGE DETAILS OVERLAY -->
-<div id="packageOverlay" class="package-overlay" aria-hidden="true">
-  <div class="package-modal" role="dialog" aria-modal="true" aria-labelledby="packageModalTitle">
-    <div class="package-modal-head">
-      <div>
-        <h2 id="packageModalTitle" data-key="packageInfoTitle">Package Vital Information</h2>
-        <p id="packageModalTracking">-</p>
-      </div>
-      <button id="packageCloseBtn" class="package-close" type="button" aria-label="Close">&times;</button>
-    </div>
-
-    <div class="package-info-body">
-      <div class="package-grid">
-
-        <section class="package-section">
-          <h3 data-key="senderInfo">Sender Information</h3>
-          <div class="package-row"><span data-key="senderName">Name</span><span id="infoSenderName">-</span></div>
-          <div class="package-row"><span data-key="senderAddress">Address</span><span id="infoSenderAddress">-</span></div>
-          <div class="package-row"><span data-key="senderRef">Reference No.</span><span id="infoSenderRef">-</span></div>
-        </section>
-
-        <section class="package-section">
-          <h3 data-key="receiverInfo">Receiver Information</h3>
-          <div class="package-row"><span data-key="receiverName">Name</span><span id="infoReceiverName">-</span></div>
-          <div class="package-row"><span data-key="receiverEmail">Email</span><span id="infoReceiverEmail">-</span></div>
-          <div class="package-row"><span data-key="receiverAddress">Address</span><span id="infoReceiverAddress">-</span></div>
-          <div class="package-row"><span data-key="receiverCountry">Country</span><span id="infoReceiverCountry">-</span></div>
-          <div class="package-row"><span data-key="receiverPhone">Phone</span><span id="infoReceiverPhone">-</span></div>
-        </section>
-
-        <section class="package-section full">
-          <h3 data-key="shipmentInfo">Shipment Information</h3>
-          <div class="package-grid" style="margin:0">
-            <div class="package-row"><span data-key="itemNo">Item No.</span><span id="infoItemNo">-</span></div>
-            <div class="package-row"><span data-key="asaluNo">ASALU No.</span><span id="infoAsaluNo">-</span></div>
-            <div class="package-row"><span data-key="deliveryMethod">Delivery Method</span><span id="infoDeliveryMethod">-</span></div>
-            <div class="package-row"><span data-key="description">Description</span><span id="infoDescription">-</span></div>
-            <div class="package-row"><span data-key="weight">Weight</span><span id="infoWeight">-</span></div>
-            <div class="package-row"><span data-key="deliveryCode">Delivery Code</span><span id="infoDeliveryCode">-</span></div>
-          </div>
-        </section>
-
-        <section class="package-section">
-          <h3 data-key="paymentInfo">Payment Information</h3>
-          <div class="package-row"><span data-key="registrationFee">Registration Fee</span><span id="infoRegFee">-</span></div>
-          <div class="package-row"><span data-key="deliveryFee">Delivery Fee</span><span id="infoDeliveryFee">-</span></div>
-          <div class="package-row"><span data-key="insuranceFee">Insurance Fee</span><span id="infoInsuranceFee">-</span></div>
-          <div class="package-row package-total"><span data-key="totalFees">Total Fees</span><span id="infoTotalFees">-</span></div>
-        </section>
-
-        <section class="package-section">
-          <h3 data-key="outstandingInfo">Payment Status</h3>
-          <div class="package-row"><span data-key="amountPaid">Amount Paid</span><span id="infoAmountPaid" class="package-paid">-</span></div>
-          <div class="package-row package-total"><span data-key="outstanding">Outstanding</span><span id="infoOutstanding" class="package-outstanding">-</span></div>
-        </section>
-
-      </div>
-    </div>
-  </div>
-</div>
-
+<!-- ================= FOOTER (identical to home.html) ================= -->
 <footer class="site-footer">
   <div class="wrap">
     <div class="footer-grid">
@@ -397,6 +290,7 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 
+<!-- ================= CHAT WIDGET (identical to home.html) ================= -->
 <button id="chatFab" aria-label="Open chat" aria-expanded="false">
   <svg class="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 0 0-7.5 13.9L3 21l4.3-1.4A9 9 0 1 0 12 3Z"/><circle cx="8.5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="15.5" cy="12" r="1"/></svg>
   <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -425,107 +319,347 @@ gtag('js',new Date());gtag('config','G-G5C2122TVD');
   </div>
 </div>
 
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script type="module" src="script.js"></script>
-<script type="module" src="tracking.js"></script>
+
+<!-- ================= PACKAGE SUMMARY / RECEIPT MODAL ================= -->
+<div id="packageSummaryModal" class="package-summary-modal hidden" role="dialog" aria-modal="true" aria-labelledby="packageSummaryTitle" aria-hidden="true">
+  <div class="package-summary-backdrop" data-close-package-summary></div>
+  <div class="package-summary-dialog" role="document">
+    <div class="package-summary-toolbar">
+      <div>
+        <span class="package-summary-eyebrow">AOL LOGISTICS</span>
+        <h2 id="packageSummaryTitle">Package Summary &amp; Receipt</h2>
+      </div>
+      <button type="button" id="closePackageSummary" aria-label="Close package summary">×</button>
+    </div>
+
+    <div id="packageReceipt" class="package-receipt">
+      <div class="receipt-brand">
+        <div>
+          <div class="receipt-logo">AOL LOGISTICS</div>
+          <div class="receipt-tagline">DELIVERY SERVICE AT ITS FINEST</div>
+        </div>
+        <div class="receipt-status" id="receiptStatus">-</div>
+      </div>
+
+      <div class="receipt-heading">
+        <div>
+          <div class="receipt-kicker">SHIPMENT RECEIPT / INVOICE</div>
+          <h3>Delivery Information</h3>
+        </div>
+        <div class="receipt-tracking">
+          <span>Shipment No.</span>
+          <strong id="receiptTrackingNo">-</strong>
+        </div>
+      </div>
+
+      <div class="receipt-grid">
+        <section class="receipt-section">
+          <h4>Sender's Info</h4>
+          <div class="receipt-row"><span>Full Name</span><strong id="receiptSenderName">-</strong></div>
+          <div class="receipt-row"><span>Address</span><strong id="receiptSenderAddress">-</strong></div>
+          <div class="receipt-row"><span>Reference No.</span><strong id="receiptSenderRef">-</strong></div>
+        </section>
+
+        <section class="receipt-section">
+          <h4>Receiver Info</h4>
+          <div class="receipt-row"><span>Full Name</span><strong id="receiptReceiverName">-</strong></div>
+          <div class="receipt-row"><span>Delivery Address</span><strong id="receiptReceiverAddress">-</strong></div>
+          <div class="receipt-row"><span>Country</span><strong id="receiptReceiverCountry">-</strong></div>
+          <div class="receipt-row"><span>Contact Person</span><strong id="receiptReceiverContact">-</strong></div>
+          <div class="receipt-row"><span>Phone</span><strong id="receiptReceiverPhone">-</strong></div>
+          <div class="receipt-row"><span>Email</span><strong id="receiptReceiverEmail">-</strong></div>
+        </section>
+
+        <section class="receipt-section">
+          <h4>Delivery Information</h4>
+          <div class="receipt-row"><span>From</span><strong id="receiptOrigin">-</strong></div>
+          <div class="receipt-row"><span>To / Destination</span><strong id="receiptDestination">-</strong></div>
+          <div class="receipt-row"><span>Delivery Code</span><strong id="receiptDeliveryCode">-</strong></div>
+          <div class="receipt-row"><span>Delivery Method</span><strong id="receiptDeliveryMethod">-</strong></div>
+          <div class="receipt-row"><span>Item No.</span><strong id="receiptItemNo">-</strong></div>
+          <div class="receipt-row"><span>Asalu No.</span><strong id="receiptAsaluNo">-</strong></div>
+        </section>
+
+        <section class="receipt-section">
+          <h4>Package Information</h4>
+          <div class="receipt-row"><span>Description</span><strong id="receiptDescription">-</strong></div>
+          <div class="receipt-row"><span>Weight / G.W.</span><strong id="receiptWeight">-</strong></div>
+          <div class="receipt-row"><span>Package Count</span><strong id="receiptPackageCount">-</strong></div>
+        </section>
+      </div>
+
+      <section class="receipt-charges">
+        <div class="charges-title">
+          <div>
+            <span class="receipt-kicker">TRANSPORT CHARGES</span>
+            <h3>Payment Summary</h3>
+          </div>
+          <div class="payment-status" id="receiptPaymentStatus">Payment details</div>
+        </div>
+
+        <div class="charge-grid">
+          <div class="charge-item"><span>Registration fee</span><strong id="receiptRegFee">-</strong></div>
+          <div class="charge-item"><span>Delivery fee</span><strong id="receiptDeliveryFee">-</strong></div>
+          <div class="charge-item"><span>Insurance fee</span><strong id="receiptInsuranceFee">-</strong></div>
+          <div class="charge-item charge-total"><span>Total</span><strong id="receiptTotal">-</strong></div>
+          <div class="charge-item charge-paid"><span>Amount Paid</span><strong id="receiptPaid">-</strong></div>
+          <div class="charge-item charge-outstanding"><span>Outstanding Amount</span><strong id="receiptOutstanding">-</strong></div>
+        </div>
+      </section>
+
+      <div class="receipt-footer">
+        <div>
+          <strong>AOL LOGISTICS</strong>
+          <span>Delivery service at its finest</span>
+        </div>
+        <div class="receipt-note">Please quote this shipment number in an enquiry.</div>
+      </div>
+    </div>
+
+    <div class="package-summary-actions">
+      <button type="button" id="printPackageReceipt">Print Receipt</button>
+      <button type="button" id="downloadReceiptPdf">Download PDF</button>
+      <button type="button" id="downloadReceiptImage">Download Image</button>
+      <button type="button" id="closePackageSummaryBottom">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <script>
-/* Package-details overlay. It reads the already-fetched shipment object
-   exposed by tracking.js and never creates a second Supabase request. */
-(function(){
-  const overlay=document.getElementById("packageOverlay");
-  const openBtn=document.getElementById("packageInfoBtn");
-  const closeBtn=document.getElementById("packageCloseBtn");
+(function () {
+  "use strict";
 
-  function value(v){
-    return v !== undefined && v !== null && String(v).trim() !== "" ? String(v) : "-";
+  var modal = document.getElementById("packageSummaryModal");
+  var openBtn = document.getElementById("packageSummaryBtn");
+  var closeBtn = document.getElementById("closePackageSummary");
+  var closeBottomBtn = document.getElementById("closePackageSummaryBottom");
+  var receipt = document.getElementById("packageReceipt");
+  var lastFocused = null;
+
+  function text(value, fallback) {
+    if (value === undefined || value === null || String(value).trim() === "") return fallback || "—";
+    return String(value);
   }
 
-  function money(v){
-    if(v === undefined || v === null || String(v).trim()==="") return "-";
-    const n=Number(v);
-    return Number.isFinite(n) ? n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) : value(v);
+  function money(value) {
+    if (value === undefined || value === null || value === "") return "—";
+    var n = Number(String(value).replace(/[^0-9.-]/g, ""));
+    return Number.isFinite(n) ? n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : text(value);
   }
 
-  function fill(){
-    const s=window.fetchedShipment || null;
-    if(!s) return;
+  function getShipment() {
+    var candidates = [
+      window.currentShipment,
+      window.currentTracking,
+      window.shipment,
+      window.trackingData,
+      window.shipmentData,
+      window.currentPackage
+    ];
 
-    const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=value(v);};
-
-    set("packageModalTracking", s.tracking_no);
-    set("infoSenderName",s.sender_name);
-    set("infoSenderAddress",s.sender_address);
-    set("infoSenderRef",s.sender_ref_no);
-
-    set("infoReceiverName",s.receiver_name || s.customer_name);
-    set("infoReceiverEmail",s.receiver_email);
-    set("infoReceiverAddress",s.receiver_address);
-    set("infoReceiverCountry",s.receiver_country);
-    set("infoReceiverPhone",s.receiver_phone || s.receiver_contact);
-
-    set("infoItemNo",s.item_no);
-    set("infoAsaluNo",s.asalu_no);
-    set("infoDeliveryMethod",s.delivery_method);
-    set("infoDescription",s.description);
-    set("infoWeight",s.weight ? `${s.weight} kg` : "-");
-    set("infoDeliveryCode",s.delivery_code);
-
-    const reg=Number(s.reg_fee)||0;
-    const delivery=Number(s.delivery_fee)||0;
-    const insurance=Number(s.insurance_fee)||0;
-    const total=reg+delivery+insurance;
-
-    set("infoRegFee",money(s.reg_fee));
-    set("infoDeliveryFee",money(s.delivery_fee));
-    set("infoInsuranceFee",money(s.insurance_fee));
-    set("infoTotalFees",money(total));
-
-    /* If no payment column exists in user_info, amount paid defaults to 0.
-       Outstanding therefore equals the stored fees until a payment field is added. */
-    const paid=Number(s.amount_paid ?? s.paid_amount ?? s.payment_amount ?? 0)||0;
-    const outstanding=Math.max(total-paid,0);
-
-    set("infoAmountPaid",money(paid));
-    set("infoOutstanding",money(outstanding));
-  }
-
-  function open(){
-    fill();
-    overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden","false");
-    document.body.style.overflow="hidden";
-  }
-
-  function close(){
-    overlay.classList.remove("open");
-    overlay.setAttribute("aria-hidden","true");
-    document.body.style.overflow="";
-  }
-
-  openBtn?.addEventListener("click",open);
-  closeBtn?.addEventListener("click",close);
-  overlay?.addEventListener("click",e=>{if(e.target===overlay)close();});
-  document.addEventListener("keydown",e=>{if(e.key==="Escape" && overlay.classList.contains("open"))close();});
-
-  /* tracking.js uses a module-scoped variable, so provide a tiny public
-     bridge whenever its shipment becomes available. */
-  const originalTitle=document.title;
-  setInterval(()=>{
-    if(window.fetchedShipment) return;
-    const candidate=document.getElementById("summaryTrackingNo")?.textContent;
-    if(candidate && candidate!=="-"){
-      /* This bridge is populated by the companion patch below. */
+    for (var i = 0; i < candidates.length; i++) {
+      if (candidates[i] && typeof candidates[i] === "object") return candidates[i];
     }
-  },500);
+
+    var stores = [window.appState, window.state, window.data];
+    for (var s = 0; s < stores.length; s++) {
+      if (stores[s] && typeof stores[s] === "object") {
+        var x = stores[s].shipment || stores[s].tracking || stores[s].currentShipment;
+        if (x && typeof x === "object") return x;
+      }
+    }
+    return {};
+  }
+
+  function get(obj, keys, fallback) {
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      if (obj && obj[key] !== undefined && obj[key] !== null && String(obj[key]).trim() !== "") return obj[key];
+    }
+    return fallback || "—";
+  }
+
+  function set(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text(value);
+  }
+
+  function populate() {
+    var d = getShipment();
+
+    set("receiptTrackingNo", get(d, ["tracking_no", "trackingNo", "trackingNumber"]));
+    set("receiptStatus", get(d, ["status", "shipment_status"]));
+
+    set("receiptSenderName", get(d, ["sender_name", "senderName"]));
+    set("receiptSenderAddress", get(d, ["sender_address", "senderAddress"]));
+    set("receiptSenderRef", get(d, ["sender_ref_no", "senderRefNo", "sender_reference_no"]));
+
+    set("receiptReceiverName", get(d, ["receiver_name", "receiverName", "customer_name", "customerName"]));
+    set("receiptReceiverAddress", get(d, ["receiver_address", "receiverAddress"]));
+    set("receiptReceiverCountry", get(d, ["receiver_country", "receiverCountry"]));
+    set("receiptReceiverContact", get(d, ["receiver_contact", "receiverContact"]));
+    set("receiptReceiverPhone", get(d, ["receiver_phone", "receiverPhone"]));
+    set("receiptReceiverEmail", get(d, ["receiver_email", "receiverEmail"]));
+
+    set("receiptOrigin", get(d, ["origin", "from"]));
+    set("receiptDestination", get(d, ["destination", "to"]));
+    set("receiptDeliveryCode", get(d, ["delivery_code", "deliveryCode"]));
+    set("receiptDeliveryMethod", get(d, ["delivery_method", "deliveryMethod"]));
+    set("receiptItemNo", get(d, ["item_no", "itemNo"]));
+    set("receiptAsaluNo", get(d, ["asalu_no", "asaluNo"]));
+
+    set("receiptDescription", get(d, ["description", "package_description", "packageDescription"]));
+    set("receiptWeight", get(d, ["weight", "gross_weight", "grossWeight"]));
+    set("receiptPackageCount", get(d, ["package_count", "packageCount", "no_of_package", "number_of_packages"], "One (1)"));
+
+    var reg = get(d, ["reg_fee", "registration_fee", "registrationFee"], null);
+    var delivery = get(d, ["delivery_fee", "deliveryFee"], null);
+    var insurance = get(d, ["insurance_fee", "insuranceFee"], null);
+    var total = get(d, ["total", "total_amount", "totalAmount", "balance_total"], null);
+    var paid = get(d, ["amount_paid", "paid_amount", "paidAmount", "payment_amount", "paymentAmount"], null);
+    var outstanding = get(d, ["outstanding_amount", "outstandingAmount", "amount_due", "amountDue", "balance"], null);
+
+    set("receiptRegFee", money(reg));
+    set("receiptDeliveryFee", money(delivery));
+    set("receiptInsuranceFee", money(insurance));
+
+    if (total === null) {
+      var nums = [reg, delivery, insurance].map(function (v) {
+        var n = Number(String(v === null ? "" : v).replace(/[^0-9.-]/g, ""));
+        return Number.isFinite(n) ? n : 0;
+      });
+      var hasAny = [reg, delivery, insurance].some(function (v) { return v !== null && v !== undefined && v !== ""; });
+      total = hasAny ? nums[0] + nums[1] + nums[2] : null;
+    }
+
+    if (outstanding === null && total !== null && paid !== null) {
+      var tn = Number(String(total).replace(/[^0-9.-]/g, ""));
+      var pn = Number(String(paid).replace(/[^0-9.-]/g, ""));
+      if (Number.isFinite(tn) && Number.isFinite(pn)) outstanding = Math.max(0, tn - pn);
+    }
+
+    set("receiptTotal", money(total));
+    set("receiptPaid", money(paid));
+    set("receiptOutstanding", money(outstanding));
+
+    var paymentStatus = document.getElementById("receiptPaymentStatus");
+    if (paymentStatus) {
+      if (paid !== null && outstanding !== null) {
+        paymentStatus.textContent = Number(String(outstanding).replace(/[^0-9.-]/g, "")) > 0 ? "Balance outstanding" : "Paid in full";
+      } else {
+        paymentStatus.textContent = "Payment details";
+      }
+    }
+  }
+
+  function openModal() {
+    populate();
+    lastFocused = document.activeElement;
+    modal.classList.remove("hidden");
+    modal.setAttribute("aria-hidden", "false");
+    document.body.classList.add("package-summary-open");
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    modal.classList.add("hidden");
+    modal.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("package-summary-open");
+    if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
+  }
+
+  function shipmentFileName(ext) {
+    var d = getShipment();
+    var no = get(d, ["tracking_no", "trackingNo", "trackingNumber"], "shipment");
+    return "AOL-Logistics-" + String(no).replace(/[^a-z0-9_-]/gi, "_") + "." + ext;
+  }
+
+  function printReceipt() {
+    var printWindow = window.open("", "_blank", "width=1000,height=900");
+    if (!printWindow) return;
+
+    var styles = Array.from(document.querySelectorAll("link[rel='stylesheet']"))
+      .map(function (link) { return "<link rel='stylesheet' href='" + link.href + "'>"; }).join("");
+
+    printWindow.document.write(
+      "<!doctype html><html><head><meta charset='utf-8'><title>AOL Logistics Receipt</title>" +
+      styles +
+      "<style>body{margin:0;background:#fff}.package-receipt{display:block!important;max-width:1000px;margin:30px auto;box-shadow:none!important}.package-summary-actions,.package-summary-toolbar{display:none!important}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.package-receipt{margin:0;max-width:none}}</style>" +
+      "</head><body>" + receipt.outerHTML + "</body></html>"
+    );
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(function () { printWindow.print(); printWindow.close(); }, 500);
+  }
+
+  function canvasReceipt() {
+    if (!window.html2canvas) return Promise.reject(new Error("Image export library unavailable"));
+    return window.html2canvas(receipt, { scale: 2, backgroundColor: "#ffffff", useCORS: true });
+  }
+
+  function downloadImage() {
+    canvasReceipt().then(function (canvas) {
+      var a = document.createElement("a");
+      a.download = shipmentFileName("png");
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    }).catch(function () { window.alert("The receipt image could not be generated."); });
+  }
+
+  function downloadPdf() {
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+      window.alert("The PDF export library could not be loaded.");
+      return;
+    }
+
+    canvasReceipt().then(function (canvas) {
+      var pdf = new window.jspdf.jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      var pageWidth = pdf.internal.pageSize.getWidth();
+      var pageHeight = pdf.internal.pageSize.getHeight();
+      var imgWidth = pageWidth;
+      var imgHeight = canvas.height * imgWidth / canvas.width;
+      var y = 0;
+      var image = canvas.toDataURL("image/jpeg", 0.95);
+
+      while (y < imgHeight) {
+        if (y > 0) pdf.addPage();
+        pdf.addImage(image, "JPEG", 0, -y, imgWidth, imgHeight);
+        y += pageHeight;
+      }
+      pdf.save(shipmentFileName("pdf"));
+    }).catch(function () { window.alert("The receipt PDF could not be generated."); });
+  }
+
+  if (openBtn) openBtn.addEventListener("click", openModal);
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  if (closeBottomBtn) closeBottomBtn.addEventListener("click", closeModal);
+
+  modal.addEventListener("click", function (event) {
+    if (event.target.hasAttribute("data-close-package-summary")) closeModal();
+  });
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !modal.classList.contains("hidden")) closeModal();
+  });
+
+  document.getElementById("printPackageReceipt").addEventListener("click", printReceipt);
+  document.getElementById("downloadReceiptImage").addEventListener("click", downloadImage);
+  document.getElementById("downloadReceiptPdf").addEventListener("click", downloadPdf);
 })();
 </script>
 
+<!-- Leaflet -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<!-- Shared site behavior: header/menu/lang/chat (same module as home.html) -->
+<script type="module" src="script.js"></script>
+
+<!-- Tracking-page logic: fetch shipment, render waybill/ETA/route/map/timeline,
+     live refresh, and the Windows-11-style pointer "reveal" glow on .reveal cards -->
+<script type="module" src="tracking.js"></script>
+
 </body>
 </html>
-'''
-
-# Create the file and a small companion patch so the overlay can access the module state.
-path = Path("/mnt/data/tracking.html")
-path.write_text(html, encoding="utf-8")
-print(f"Created: {path} ({path.stat().st_size:,} bytes)")
