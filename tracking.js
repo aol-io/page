@@ -284,6 +284,24 @@ function renderTimeline() {
   }).join("");
 }
 
+/* ------------------------------------------------------------
+   6b. Package Summary / Receipt modal data bridge
+   The modal in tracking.html (packageSummaryModal) reads its
+   fields from window.currentShipment when the user opens it.
+   We keep that global in sync with whatever is currently on
+   screen, merging in the latest status/location so the receipt
+   reflects live tracking data too.
+   ------------------------------------------------------------ */
+function syncReceiptShipment(normalizedStatus, latestUpdate) {
+  if (!fetchedShipment) return;
+  window.currentShipment = {
+    ...fetchedShipment,
+    status: t((statusMapping[normalizedStatus] || statusMapping["Order Placed"]).key),
+    destination: fetchedShipment.destination || fetchedShipment.receiver_country,
+    location: latestUpdate?.location || fetchedShipment.location_text || fetchedShipment.location
+  };
+}
+
 function renderAll() {
   if (!fetchedShipment) return;
 
@@ -308,6 +326,7 @@ function renderAll() {
   highlightRoute(normalized);
   computeEta(fetchedShipment, normalized);
   renderTimeline();
+  syncReceiptShipment(normalized, latest);
 }
 
 /* ============================================================
